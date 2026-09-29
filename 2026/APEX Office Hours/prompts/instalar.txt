@@ -1,0 +1,197 @@
+Los artefactos APEXlang de APEX Streaming ya fueron generados y
+validados, incluyendo runtime validate, con resultado:
+
+GENERATION READY FOR IMPORT: YES
+
+Procede ahora con el despliegue controlado de la aplicación en
+Oracle APEX.
+
+ENTORNO
+
+- SQLcl connection: AIDEV-ACEDEMOS
+- Workspace: APEXLANG
+- Parsing Schema: AIDEV
+- Application Alias deseado: APEX-STREAMING-DEMO
+
+IMPORTANTE
+
+Esta es una nueva aplicación para la demostración.
+
+NO actualices Application 120.
+NO utilices Application 123.
+NO elimines ni modifiques ninguna aplicación existente.
+
+
+1. PREFLIGHT
+
+Antes de importar realiza únicamente consultas read-only para confirmar:
+
+- conexión SQLcl correcta;
+- usuario/schema conectado;
+- workspace APEXLANG existente;
+- parsing schema AIDEV;
+- versión de Oracle APEX;
+- si existe alguna aplicación con alias APEX-STREAMING-DEMO.
+
+Si el alias APEX-STREAMING-DEMO ya existe:
+
+DETENTE.
+
+No actualices esa aplicación.
+No cambies automáticamente el alias.
+No elimines ninguna aplicación.
+
+Reporta el conflicto y solicita mi decisión.
+
+
+2. VALIDACIÓN FINAL
+
+Si el alias no existe, utiliza los artefactos actuales de:
+
+applications/apex-streaming/
+
+Ejecuta nuevamente `apex validate` sobre EXACTAMENTE el árbol que
+posteriormente será importado.
+
+No regeneres ni modifiques los artefactos durante este paso.
+
+Si `apex validate` no finaliza en PASS:
+
+DETENTE.
+
+No importes.
+
+
+3. AUTORIZACIÓN DE CREACIÓN
+
+Si:
+
+- el preflight es correcto;
+- APEX-STREAMING-DEMO no existe;
+- apex validate finaliza en PASS;
+
+AUTORIZO la creación de una NUEVA aplicación Oracle APEX.
+
+La aplicación creada debe utilizar:
+
+Workspace: APEXLANG
+Alias: APEX-STREAMING-DEMO
+Parsing Schema: AIDEV
+
+Utiliza exclusivamente el mecanismo de create-new/import documentado
+por los Oracle APEX Skills instalados.
+
+No utilices el flujo update-existing.
+
+
+4. IMPORT
+
+Importa exactamente los mismos artefactos que fueron validados.
+
+Captura el Application ID realmente asignado por Oracle APEX.
+
+No presupongas el Application ID antes del import.
+
+
+5. VERIFICACIÓN POST-IMPORT
+
+Después del import realiza consultas read-only para verificar:
+
+- Application ID creado;
+- alias = APEX-STREAMING-DEMO;
+- workspace = APEXLANG;
+- parsing schema = AIDEV;
+- página Login existente;
+- Login pública;
+- páginas funcionales protegidas;
+- páginas definidas en application-spec.md existentes;
+- páginas Modal Dialog existentes;
+- Interactive Reports existentes;
+- columnas de Interactive Reports materializadas;
+- Forms Modal Dialog con sus items;
+- procesos Form Initialization existentes cuando corresponda;
+- procesos Form Automatic Row Processing existentes cuando corresponda;
+- LOVs compartidas existentes;
+- enlaces Nuevo / Editar materializados;
+- navegación Películas → Reparto;
+- navegación Actores → Filmografía;
+- página Reparto con contexto PELICULA_ID;
+- página Filmografía con contexto ACTOR_ID;
+- componentes de Devolución existentes;
+- Dashboard y Estadísticas existentes.
+
+Compara además las cantidades materializadas en Oracle APEX contra
+.apexlang/application-spec.md y contra el inventario reportado durante
+la generación.
+
+
+6. CONTROL DE IDENTIDAD
+
+Verifica explícitamente que:
+
+- solamente se creó UNA nueva aplicación;
+- esa aplicación tiene alias APEX-STREAMING-DEMO;
+- el Application ID reportado por el import coincide con el Application
+  ID encontrado posteriormente en Oracle APEX;
+- Application 120 no fue modificada;
+- Application 123 no fue modificada.
+
+Si existe cualquier discrepancia:
+
+NO realices acciones compensatorias.
+NO elimines aplicaciones.
+NO vuelvas a importar.
+
+Reporta el problema y detente.
+
+
+7. NO HACER
+
+Durante este paso:
+
+- no modifiques database/;
+- no ejecutes generar-datos.sql;
+- no modifiques README.md;
+- no modifiques docs/;
+- no modifiques .apexlang/application-spec.md;
+- no modifiques los artefactos APEXlang;
+- no modifiques los Oracle APEX Skills;
+- no modifiques runtime.bundle.mjs;
+- no corrijas manualmente componentes desde Oracle APEX;
+- no elimines aplicaciones;
+- no actualices Application 120;
+- no actualices Application 123.
+
+
+AL FINAL REPORTA
+
+- preflight: PASS/FAIL;
+- apex validate: PASS/FAIL;
+- import: PASS/FAIL;
+- Application ID creado;
+- Application Alias;
+- Workspace;
+- Parsing Schema;
+- páginas materializadas;
+- Interactive Reports materializados;
+- columnas de reportes materializadas;
+- Modal Dialog Forms materializados;
+- items de formularios materializados;
+- LOVs materializadas;
+- Login/autenticación verificados: PASS/FAIL;
+- Películas → Reparto: PASS/FAIL;
+- Actores → Filmografía: PASS/FAIL;
+- Devolución: PASS/FAIL;
+- comparación contra application-spec.md: PASS/FAIL;
+- Application 120 sin cambios: YES/NO;
+- Application 123 sin cambios: YES/NO;
+- aplicaciones nuevas creadas: cantidad;
+- warnings;
+- DEPLOYMENT: PASS/FAIL.
+
+Solo devuelve:
+
+DEPLOYMENT: PASS
+
+si la aplicación fue creada correctamente, su identidad fue verificada
+y los componentes materializados coinciden con la especificación.
