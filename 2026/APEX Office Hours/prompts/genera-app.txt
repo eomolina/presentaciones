@@ -1,0 +1,296 @@
+Implementa ahora la aplicación APEX Streaming definida en:
+
+- README.md
+- database/
+- docs/requisitos.md
+- docs/modelo-funcional.md
+- docs/mapa-paginas.md
+- .apexlang/application-spec.md
+
+La especificación aprobada en application-spec.md es el contrato de
+generación.
+
+Usa los Oracle APEX Skills instalados como fuente de verdad para la
+sintaxis, estructura, componentes, propiedades y patrones soportados
+por APEXlang.
+
+OBJETIVO
+
+Genera una aplicación APEXlang completa y funcional en:
+
+applications/apex-streaming/
+
+No importes todavía la aplicación en Oracle APEX.
+
+
+REGLAS DE GENERACIÓN
+
+1. No inventes sintaxis APEXlang.
+
+2. Antes de implementar cada tipo de componente, consulta el patrón
+   correspondiente en los Oracle APEX Skills instalados.
+
+3. Implementa todos los componentes definidos en
+   .apexlang/application-spec.md.
+
+4. No consideres completa una página únicamente porque compile.
+
+5. No omitas componentes funcionales explícitamente definidos en la
+   especificación.
+
+
+INTERACTIVE REPORTS
+
+Para cada Interactive Report:
+
+- genera explícitamente todas las columnas definidas en
+  application-spec.md;
+- no dependas únicamente del SQL source para que APEX infiera las
+  columnas;
+- conserva headings, tipos, data types, secuencias, formatos y enlaces
+  definidos;
+- utiliza el patrón de link column soportado por los Skills.
+
+Si el gate DSL offline rechaza una link column que está respaldada por
+los Skills y aceptada por el compilador APEXlang, conserva el artefacto
+válido y documenta el resultado para reconciliación posterior. No
+sustituyas sintaxis válida por una alternativa que el compilador
+rechace.
+
+
+MODAL DIALOG FORMS
+
+Implementa los mantenimientos mediante páginas Modal Dialog separadas.
+
+Cada formulario debe incluir, cuando corresponda:
+
+- región Form;
+- PK;
+- todos los items especificados;
+- source.column;
+- source.dataType;
+- required;
+- LOVs;
+- Form Initialization;
+- Form Automatic Row Processing;
+- validaciones;
+- botón Guardar;
+- botón Cancelar;
+- cierre del diálogo.
+
+No generes Forms embebidos dentro de las páginas de Interactive Report.
+
+
+REPORT → MODAL DIALOG
+
+Implementa:
+
+Interactive Report
+        ↓
+Nuevo / Editar
+        ↓
+Modal Dialog
+        ↓
+Guardar / Cancelar
+        ↓
+Close Dialog
+        ↓
+Refresh del reporte padre
+
+Usa el patrón documentado por los Skills para el refresh posterior al
+cierre del diálogo, incluyendo apexafterclosedialog cuando corresponda.
+
+
+PELÍCULAS → REPARTO
+
+Implementa Películas y Reparto como páginas separadas.
+
+Desde Películas debe poder seleccionarse una película y navegar a
+Reparto.
+
+Propaga PELICULA_ID mediante el patrón soportado por los Skills.
+
+Reparto debe:
+
+- conservar PELICULA_ID como contexto;
+- mostrar únicamente registros de la película seleccionada;
+- permitir crear registros manteniendo PELICULA_ID;
+- permitir editar registros manteniendo el contexto;
+- utilizar la LOV de actores definida en la especificación.
+
+No implementes Películas/Reparto como regiones independientes sin
+relación funcional.
+
+
+ACTORES → FILMOGRAFÍA
+
+Implementa Actores y Filmografía como páginas separadas.
+
+Desde Actores debe poder seleccionarse un actor y navegar a Filmografía.
+
+Propaga ACTOR_ID mediante el patrón soportado por los Skills.
+
+Filmografía debe mostrar únicamente las películas relacionadas con el
+actor seleccionado.
+
+No implementes Actores/Filmografía como regiones independientes sin
+relación funcional.
+
+
+LOGIN Y AUTENTICACIÓN
+
+Genera la página Login y los componentes de autenticación definidos en
+application-spec.md.
+
+Login debe ser pública.
+
+Las páginas funcionales deben requerir autenticación.
+
+Usa exclusivamente el patrón de autenticación soportado por los Oracle
+APEX Skills.
+
+
+ALQUILERES Y DEVOLUCIÓN
+
+Respeta estrictamente application-spec.md y database/.
+
+En particular:
+
+- utiliza FECHA_VENCIMIENTO;
+- no inventes estado VENCIDO;
+- determina los vencimientos mediante las reglas documentadas;
+- Devolución debe ser una operación especializada sobre un alquiler
+  existente;
+- no conviertas Devolución en un CRUD genérico.
+
+
+LOVs
+
+Genera las LOVs definidas en application-spec.md utilizando los patrones
+soportados por los Skills.
+
+Para LOVs dinámicas verifica especialmente:
+
+- nombre válido;
+- source.type;
+- SQL query;
+- return column;
+- display column.
+
+
+COMPLETITUD FUNCIONAL
+
+Después de generar los artefactos realiza una auditoría estática
+comparando la implementación contra application-spec.md.
+
+Verifica explícitamente:
+
+- todas las páginas especificadas existen;
+- todos los Interactive Reports existen;
+- todos los Interactive Reports contienen sus columnas explícitas;
+- la cantidad de columnas coincide con la especificación;
+- todos los Modal Dialog Forms existen;
+- todos los Forms contienen sus items;
+- las PK están materializadas;
+- existen Form Initialization donde corresponda;
+- existe Form Automatic Row Processing donde corresponda;
+- existen Guardar y Cancelar;
+- existen enlaces Nuevo / Editar;
+- existe cierre de Modal Dialog;
+- existe refresh del reporte padre;
+- Películas → Reparto propaga PELICULA_ID;
+- Reparto filtra por PELICULA_ID;
+- Actores → Filmografía propaga ACTOR_ID;
+- Filmografía filtra por ACTOR_ID;
+- Login existe y es pública;
+- las páginas funcionales están protegidas;
+- Devolución conserva su comportamiento especializado;
+- todas las LOVs requeridas existen;
+- todos los RF tienen implementación.
+
+
+VALIDACIÓN
+
+Una vez completada la generación ejecuta los gates disponibles definidos
+por los Oracle APEX Skills en el orden apropiado.
+
+Realiza:
+
+1. validación estructural;
+2. validación de gramática;
+3. validación de vocabulario;
+4. validaciones estáticas/compiler-truth;
+5. validación de integración;
+6. cualquier otro gate offline requerido por los Skills.
+
+Corrige únicamente errores reales respaldados por los Skills.
+
+No cambies artefactos válidos solamente para satisfacer un linter
+offline cuando exista evidencia de que dicho linter está desalineado
+con el contrato y el compilador autoritativo.
+
+Después de superar los gates offline, ejecuta runtime validate utilizando:
+
+SQLcl connection:
+AIDEV-ACEDEMOS
+
+El runtime se utiliza únicamente para VALIDACIÓN.
+
+NO IMPORTES LA APLICACIÓN.
+
+
+REGLAS DE SEGURIDAD DEL PROCESO
+
+- no modifiques database/;
+- no ejecutes los scripts de database/;
+- no modifiques README.md;
+- no modifiques docs/;
+- no modifiques runtime.bundle.mjs;
+- no modifiques los Oracle APEX Skills;
+- no importes la aplicación;
+- no crees ninguna aplicación en Oracle APEX;
+- no actualices ninguna aplicación existente;
+- no elimines ninguna aplicación;
+- no realices cambios manuales directamente en Oracle APEX.
+
+Si runtime validate falla:
+
+- diagnostica la causa;
+- corrige únicamente los artefactos APEXlang si el problema pertenece
+  a ellos;
+- vuelve a validar;
+- no importes.
+
+
+AL FINAL REPORTA
+
+- páginas generadas;
+- Interactive Reports generados;
+- columnas de reportes generadas;
+- Modal Dialog Forms generados;
+- items de formularios generados;
+- LOVs generadas;
+- enlaces Report → Modal generados;
+- relaciones Películas → Reparto implementadas;
+- relaciones Actores → Filmografía implementadas;
+- componentes de Login/autenticación generados;
+- resultado de cada gate offline;
+- resultado de runtime validate;
+- warnings;
+- discrepancias entre linters offline y compilador, si existen;
+- requisitos sin implementar;
+- GENERATION READY FOR IMPORT: YES/NO.
+
+Solo devuelve:
+
+GENERATION READY FOR IMPORT: YES
+
+si:
+
+- la implementación coincide con application-spec.md;
+- no existen componentes funcionales requeridos sin generar;
+- los errores reales de los gates están resueltos;
+- runtime validate finaliza en PASS.
+
+No importes la aplicación aunque el resultado sea
+GENERATION READY FOR IMPORT: YES.
