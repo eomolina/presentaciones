@@ -1,10 +1,10 @@
-# Oracle ACE Connect Cpsta Rica
+# Oracle ACE Connect Costa Rica
 
 El Oracle ACE Connect Costa Rica se realizó en las instalaciones de la Universidad Cenfotec el pasado 9 de mayo y contó con la participación de los diferentes Oracle ACE del país. En dicho evento hice una presentación centrada en el uso de Template Directives de Oracle APEX.
 
 ## Inyecta hormonas a tus interfaces APEX: Entra al mundo de las Template Directives
 
-### Descripción:
+### Descripción
 
 Esta presentación es un viaje introductorio de descubrimiento de la manera en que podemos potenciar nuestras aplicaciones APEX con interfaces más dinámicas y modernas, en la que cubro:
 
