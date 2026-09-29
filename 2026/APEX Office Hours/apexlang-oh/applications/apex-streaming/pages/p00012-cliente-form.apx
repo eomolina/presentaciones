@@ -1,0 +1,525 @@
+page 12 (
+    page: 12
+    name: "Cliente"
+    alias: CLIENTE-FORM
+    title: "Cliente"
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @/modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        authorizationScheme: mustNotBePublicUser
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    help {
+        helpText: "Consulte Cliente. Los cambios se guardan al confirmar; Cancelar conserva los datos existentes."
+    }
+    region form-cliente (
+        name: "Cliente"
+        type: form
+        source {
+            location: localDatabase
+            tableName: STREAM_CLIENTES
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+        }
+    )
+    region botones-cliente (
+        name: "Acciones"
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: REGION_POSITION_03
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: #DEFAULT#
+        }
+    )
+    pageItem P12_CLIENTE_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @form-cliente
+            slot: regionBody
+        }
+        source {
+            formRegion: @form-cliente
+            column: CLIENTE_ID
+            dataType: number
+            primaryKey: true
+            queryOnly: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+    pageItem P12_NOMBRE (
+        type: textField
+        label {
+            label: "Nombre"
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @form-cliente
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-cliente
+            column: NOMBRE
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Nombre. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P12_APELLIDO (
+        type: textField
+        label {
+            label: "Apellido"
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @form-cliente
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-cliente
+            column: APELLIDO
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Apellido. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P12_EMAIL (
+        type: textField
+        label {
+            label: "Email"
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @form-cliente
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-cliente
+            column: EMAIL
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Email. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P12_PAIS (
+        type: textField
+        label {
+            label: "Pais"
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @form-cliente
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-cliente
+            column: PAIS
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Pais. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P12_CIUDAD (
+        type: textField
+        label {
+            label: "Ciudad"
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @form-cliente
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-cliente
+            column: CIUDAD
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Ciudad. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P12_FECHA_NACIMIENTO (
+        type: datePicker
+        label {
+            label: "Fecha nacimiento"
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @form-cliente
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+            formatMask: "YYYY-MM-DD HH24:MI:SS"
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-cliente
+            column: FECHA_NACIMIENTO
+            dataType: date
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Fecha nacimiento. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P12_GENERO (
+        type: selectList
+        label {
+            label: "Genero"
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @form-cliente
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        lov {
+            type: sharedComponent
+            lov: @genero-cliente
+            displayNullValue: true
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-cliente
+            column: GENERO
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Genero. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P12_FECHA_REGISTRO (
+        type: displayOnly
+        label {
+            label: "Fecha registro"
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @form-cliente
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+            formatMask: "YYYY-MM-DD HH24:MI:SS.FF6"
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        source {
+            formRegion: @form-cliente
+            column: FECHA_REGISTRO
+            dataType: timestamp
+            primaryKey: false
+            queryOnly: true
+        }
+        help {
+            helpText: "Indique Fecha registro. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P12_ACTIVO (
+        type: selectList
+        label {
+            label: "Activo"
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @form-cliente
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        lov {
+            type: sharedComponent
+            lov: @si-no
+            displayNullValue: true
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-cliente
+            column: ACTIVO
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Activo. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    process init-cliente (
+        name: "init-cliente"
+        type: formInitialization
+        formRegion: @form-cliente
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+    )
+    process defaults-cliente (
+        name: "defaults-cliente"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                :P12_ACTIVO := 'S';
+                END;
+                ```
+        }
+        execution {
+            sequence: 30
+            point: beforeHeader
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P12_CLIENTE_ID
+        }
+    )
+    button create (
+        buttonName: CREATE
+        label: "Guardar"
+        layout {
+            sequence: 10
+            region: @botones-cliente
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: insert
+            executeValidations: true
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P12_CLIENTE_ID
+        }
+    )
+    button save (
+        buttonName: SAVE
+        label: "Guardar"
+        layout {
+            sequence: 20
+            region: @botones-cliente
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: update
+            executeValidations: true
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P12_CLIENTE_ID
+        }
+    )
+    button delete (
+        buttonName: DELETE
+        label: "Eliminar"
+        layout {
+            sequence: 30
+            region: @botones-cliente
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: delete
+            executeValidations: false
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: "Se eliminará el registro. Las referencias existentes pueden impedir la eliminación."
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P12_CLIENTE_ID
+        }
+    )
+    process comprobar-operacion (
+        name: "comprobar-operacion"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                 IF :REQUEST = 'CREATE' AND :P12_CLIENTE_ID IS NOT NULL THEN
+                  RAISE_APPLICATION_ERROR(-20030,'El alta no admite identificador existente.');
+                 ELSIF :REQUEST IN ('SAVE','DELETE') AND (:P12_CLIENTE_ID IS NULL OR 12=14) THEN
+                  RAISE_APPLICATION_ERROR(-20031,'La operación no corresponde al registro.');
+                 END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 5
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+    button cancel (
+        buttonName: CANCEL
+        label: "Cancelar"
+        layout {
+            sequence: 40
+            region: @botones-cliente
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+    dynamicAction cancelar (
+        name: "cancelar"
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+        action ejecutar (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                event: @cancelar
+                fireOnInit: false
+            }
+        )
+    )
+    process arp-cliente (
+        name: "arp-cliente"
+        type: formAutoRowProcessing
+        formRegion: @form-cliente
+        execution {
+            sequence: 30
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+    process cerrar-cliente (
+        name: "cerrar-cliente"
+        type: closeDialog
+        execution {
+            sequence: 100
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+)

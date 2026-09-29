@@ -1,0 +1,341 @@
+page 3 (
+    page: 3
+    name: "Género"
+    alias: GENERO-FORM
+    title: "Género"
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @/modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        authorizationScheme: mustNotBePublicUser
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    help {
+        helpText: "Consulte Género. Los cambios se guardan al confirmar; Cancelar conserva los datos existentes."
+    }
+    region form-genero (
+        name: "Género"
+        type: form
+        source {
+            location: localDatabase
+            tableName: STREAM_GENEROS
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+        }
+    )
+    region botones-genero (
+        name: "Acciones"
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: REGION_POSITION_03
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: #DEFAULT#
+        }
+    )
+    pageItem P3_GENERO_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @form-genero
+            slot: regionBody
+        }
+        source {
+            formRegion: @form-genero
+            column: GENERO_ID
+            dataType: number
+            primaryKey: true
+            queryOnly: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+    pageItem P3_NOMBRE (
+        type: textField
+        label {
+            label: "Nombre"
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @form-genero
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-genero
+            column: NOMBRE
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Nombre. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P3_DESCRIPCION (
+        type: textarea
+        label {
+            label: "Descripcion"
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @form-genero
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @form-genero
+            column: DESCRIPCION
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Descripcion. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P3_ESTADO (
+        type: selectList
+        label {
+            label: "Estado"
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @form-genero
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        lov {
+            type: sharedComponent
+            lov: @estados-genero
+            displayNullValue: true
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-genero
+            column: ESTADO
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Estado. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    process init-genero (
+        name: "init-genero"
+        type: formInitialization
+        formRegion: @form-genero
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+    )
+    process defaults-genero (
+        name: "defaults-genero"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                :P3_ESTADO := 'ACTIVO';
+                END;
+                ```
+        }
+        execution {
+            sequence: 30
+            point: beforeHeader
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P3_GENERO_ID
+        }
+    )
+    button create (
+        buttonName: CREATE
+        label: "Guardar"
+        layout {
+            sequence: 10
+            region: @botones-genero
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: insert
+            executeValidations: true
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P3_GENERO_ID
+        }
+    )
+    button save (
+        buttonName: SAVE
+        label: "Guardar"
+        layout {
+            sequence: 20
+            region: @botones-genero
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: update
+            executeValidations: true
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P3_GENERO_ID
+        }
+    )
+    button delete (
+        buttonName: DELETE
+        label: "Eliminar"
+        layout {
+            sequence: 30
+            region: @botones-genero
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: delete
+            executeValidations: false
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: "Se eliminará el registro. Las referencias existentes pueden impedir la eliminación."
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P3_GENERO_ID
+        }
+    )
+    process comprobar-operacion (
+        name: "comprobar-operacion"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                 IF :REQUEST = 'CREATE' AND :P3_GENERO_ID IS NOT NULL THEN
+                  RAISE_APPLICATION_ERROR(-20030,'El alta no admite identificador existente.');
+                 ELSIF :REQUEST IN ('SAVE','DELETE') AND (:P3_GENERO_ID IS NULL OR 3=14) THEN
+                  RAISE_APPLICATION_ERROR(-20031,'La operación no corresponde al registro.');
+                 END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 5
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+    button cancel (
+        buttonName: CANCEL
+        label: "Cancelar"
+        layout {
+            sequence: 40
+            region: @botones-genero
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+    dynamicAction cancelar (
+        name: "cancelar"
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+        action ejecutar (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                event: @cancelar
+                fireOnInit: false
+            }
+        )
+    )
+    process arp-genero (
+        name: "arp-genero"
+        type: formAutoRowProcessing
+        formRegion: @form-genero
+        execution {
+            sequence: 30
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+    process cerrar-genero (
+        name: "cerrar-genero"
+        type: closeDialog
+        execution {
+            sequence: 100
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+)

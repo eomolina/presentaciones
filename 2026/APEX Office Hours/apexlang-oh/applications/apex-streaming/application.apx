@@ -1,0 +1,46 @@
+app APEX-STREAMING (
+    name: "APEX Streaming"
+    alias: APEX-STREAMING
+    version: "1.0"
+    type: standard
+    logo {
+        type: text
+        text: "APEX Streaming"
+    }
+    navigation {
+        homeUrl: {
+            page: 1
+        }
+        loginUrl: {
+            page: 9999
+        }
+    }
+    navigationMenu {
+        listTemplate: @/side-navigation-menu
+        list: @navigation-menu
+        templateOptions: #DEFAULT#
+    }
+    navigationBar {
+        list: @navigation-bar
+        listTemplate: @/navigation-bar
+        templateOptions: #DEFAULT#
+    }
+    userInterface {
+        currentTheme: @universal-theme
+        globalPage: 0
+    }
+    authentication {
+        scheme: @oracle-apex-accounts
+    }
+    appFormatMasks {
+        date: "YYYY-MM-DD HH24:MI:SS"
+        timestamp: "YYYY-MM-DD HH24:MI:SS.FF6"
+    }
+    sessionManagement {
+        maxSessionIdleTime: 3600
+        maxSessionLength: 28800
+    }
+    sessionStateProtection {
+        checksumSalt: 5D25A52570FD36FB3064F6568F022B4919DAB97CC9F2D6E1AB47DFD2B6C54D07
+    }
+)

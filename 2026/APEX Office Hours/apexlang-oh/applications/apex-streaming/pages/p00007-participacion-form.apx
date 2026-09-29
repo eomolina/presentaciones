@@ -1,0 +1,444 @@
+page 7 (
+    page: 7
+    name: "Participación"
+    alias: PARTICIPACION-FORM
+    title: "Participación"
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @/modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        authorizationScheme: mustNotBePublicUser
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    help {
+        helpText: "Consulte Participación. Los cambios se guardan al confirmar; Cancelar conserva los datos existentes."
+    }
+    region form-participacion (
+        name: "Participación"
+        type: form
+        source {
+            location: localDatabase
+            tableName: STREAM_PELICULA_ACTOR
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+        }
+    )
+    region botones-participacion (
+        name: "Acciones"
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: REGION_POSITION_03
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: #DEFAULT#
+        }
+    )
+    pageItem P7_PELICULA_ACTOR_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @form-participacion
+            slot: regionBody
+        }
+        source {
+            formRegion: @form-participacion
+            column: PELICULA_ACTOR_ID
+            dataType: number
+            primaryKey: true
+            queryOnly: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+    pageItem P7_PELICULA_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @form-participacion
+            slot: regionBody
+        }
+        source {
+            formRegion: @form-participacion
+            column: PELICULA_ID
+            dataType: number
+            primaryKey: false
+            queryOnly: false
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+    pageItem P7_ACTOR_ID (
+        type: popupLov
+        label {
+            label: "Actor id"
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @form-participacion
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        lov {
+            type: sharedComponent
+            lov: @actores
+            displayNullValue: true
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-participacion
+            column: ACTOR_ID
+            dataType: number
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Actor id. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P7_PERSONAJE (
+        type: textField
+        label {
+            label: "Personaje"
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @form-participacion
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @form-participacion
+            column: PERSONAJE
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Personaje. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P7_ORDEN_CREDITO (
+        type: numberField
+        label {
+            label: "Orden credito"
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @form-participacion
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @form-participacion
+            column: ORDEN_CREDITO
+            dataType: number
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Orden credito. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P7_PADRE_ID (
+        type: hidden
+        layout {
+            sequence: 60
+            region: @form-participacion
+            slot: regionBody
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+    process comprobar-contexto (
+        name: "comprobar-contexto"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                 l_parent NUMBER;
+                 l_count NUMBER;
+                BEGIN
+                 SELECT COUNT(*) INTO l_count FROM STREAM_PELICULAS WHERE PELICULA_ID=:P7_PADRE_ID;
+                 IF l_count<>1 OR :P7_PELICULA_ID IS NULL OR :P7_PELICULA_ID<>:P7_PADRE_ID THEN
+                  RAISE_APPLICATION_ERROR(-20010,'Contexto de película inválido.');
+                 END IF;
+                 IF :P7_PELICULA_ACTOR_ID IS NOT NULL THEN
+                  SELECT PELICULA_ID INTO l_parent FROM STREAM_PELICULA_ACTOR WHERE PELICULA_ACTOR_ID=:P7_PELICULA_ACTOR_ID;
+                  IF l_parent<>:P7_PADRE_ID THEN RAISE_APPLICATION_ERROR(-20011,'Participación ajena a la película.'); END IF;
+                 END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+    )
+    process proteger-contexto (
+        name: "proteger-contexto"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                 l_parent NUMBER;
+                 l_count NUMBER;
+                BEGIN
+                 SELECT COUNT(*) INTO l_count FROM STREAM_PELICULAS WHERE PELICULA_ID=:P7_PADRE_ID;
+                 IF l_count<>1 OR :P7_PELICULA_ID IS NULL OR :P7_PELICULA_ID<>:P7_PADRE_ID THEN
+                  RAISE_APPLICATION_ERROR(-20010,'Contexto de película inválido.');
+                 END IF;
+                 IF :P7_PELICULA_ACTOR_ID IS NOT NULL THEN
+                  SELECT PELICULA_ID INTO l_parent FROM STREAM_PELICULA_ACTOR WHERE PELICULA_ACTOR_ID=:P7_PELICULA_ACTOR_ID FOR UPDATE;
+                  IF l_parent<>:P7_PADRE_ID THEN RAISE_APPLICATION_ERROR(-20011,'Participación ajena a la película.'); END IF;
+                 END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+    validation VAL_CONTEXTO_PARTICIPACION (
+        name: "contexto-participacion"
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: expression
+            plsqlExpression:
+                ```plsql
+                :P7_PELICULA_ID = :P7_PADRE_ID
+                ```
+        }
+        error {
+            errorMessage: "Revise contexto participacion."
+            associatedItem: @P7_PELICULA_ID
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE"
+        }
+    )
+    process init-participacion (
+        name: "init-participacion"
+        type: formInitialization
+        formRegion: @form-participacion
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+    )
+    process defaults-participacion (
+        name: "defaults-participacion"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                :P7_PELICULA_ID := :P7_PADRE_ID;
+                END;
+                ```
+        }
+        execution {
+            sequence: 30
+            point: beforeHeader
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P7_PELICULA_ACTOR_ID
+        }
+    )
+    button create (
+        buttonName: CREATE
+        label: "Guardar"
+        layout {
+            sequence: 10
+            region: @botones-participacion
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: insert
+            executeValidations: true
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P7_PELICULA_ACTOR_ID
+        }
+    )
+    button save (
+        buttonName: SAVE
+        label: "Guardar"
+        layout {
+            sequence: 20
+            region: @botones-participacion
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: update
+            executeValidations: true
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P7_PELICULA_ACTOR_ID
+        }
+    )
+    button delete (
+        buttonName: DELETE
+        label: "Eliminar"
+        layout {
+            sequence: 30
+            region: @botones-participacion
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: delete
+            executeValidations: false
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: "Se eliminará el registro. Las referencias existentes pueden impedir la eliminación."
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P7_PELICULA_ACTOR_ID
+        }
+    )
+    process comprobar-operacion (
+        name: "comprobar-operacion"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                 IF :REQUEST = 'CREATE' AND :P7_PELICULA_ACTOR_ID IS NOT NULL THEN
+                  RAISE_APPLICATION_ERROR(-20030,'El alta no admite identificador existente.');
+                 ELSIF :REQUEST IN ('SAVE','DELETE') AND (:P7_PELICULA_ACTOR_ID IS NULL OR 7=14) THEN
+                  RAISE_APPLICATION_ERROR(-20031,'La operación no corresponde al registro.');
+                 END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 5
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+    button cancel (
+        buttonName: CANCEL
+        label: "Cancelar"
+        layout {
+            sequence: 40
+            region: @botones-participacion
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+    dynamicAction cancelar (
+        name: "cancelar"
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+        action ejecutar (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                event: @cancelar
+                fireOnInit: false
+            }
+        )
+    )
+    process arp-participacion (
+        name: "arp-participacion"
+        type: formAutoRowProcessing
+        formRegion: @form-participacion
+        execution {
+            sequence: 30
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+    process cerrar-participacion (
+        name: "cerrar-participacion"
+        type: closeDialog
+        execution {
+            sequence: 100
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+)

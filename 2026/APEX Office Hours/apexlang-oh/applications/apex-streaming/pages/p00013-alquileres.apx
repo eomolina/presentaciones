@@ -1,0 +1,408 @@
+page 13 (
+    page: 13
+    name: "Alquileres"
+    alias: ALQUILERES
+    title: "Alquileres"
+    appearance {
+        pageMode: normal
+        pageTemplate: @/standard
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        authorizationScheme: mustNotBePublicUser
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    help {
+        helpText: "Consulte Alquileres. Los cambios se guardan al confirmar; Cancelar conserva los datos existentes."
+    }
+    region bc-alquileres (
+        name: "Alquileres"
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @/title-bar
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            breadcrumbTemplate: @/breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+    region filtros-alquileres (
+        name: "Consulta de alquileres"
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+    )
+    pageItem P13_SOLO_ACTIVOS (
+        type: selectList
+        label {
+            label: "Mostrar"
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @filtros-alquileres
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        lov {
+            type: sharedComponent
+            lov: @alcance-alquileres
+            displayNullValue: true
+        }
+        help {
+            helpText: "Indique Mostrar. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    process iniciar-filtro (
+        name: "iniciar-filtro"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                 :P13_SOLO_ACTIVOS := NVL(:P13_SOLO_ACTIVOS,'N');
+                 IF :P13_SOLO_ACTIVOS NOT IN ('S','N') THEN RAISE_APPLICATION_ERROR(-20003,'Filtro inválido.'); END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+    )
+    dynamicAction filtrar-activos (
+        name: "filtrar-activos"
+        execution {
+            sequence: 10
+        }
+        when {
+            event: change
+            selectionType: items
+            items: "P13_SOLO_ACTIVOS"
+        }
+        action ejecutar (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @ir-alquileres
+            }
+            execution {
+                sequence: 10
+                event: @filtrar-activos
+                fireOnInit: false
+            }
+        )
+    )
+    region ir-alquileres (
+        name: "Alquileres"
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT al.ALQUILER_ID AS ALQUILER_ID,
+                       c.NOMBRE || ' ' || c.APELLIDO AS CLIENTE,
+                       p.TITULO AS PELICULA,
+                       CAST(al.FECHA_ALQUILER AS DATE) AS FECHA_ALQUILER,
+                       CAST(al.FECHA_VENCIMIENTO AS DATE) AS FECHA_VENCIMIENTO,
+                       CAST(al.FECHA_DEVOLUCION AS DATE) AS FECHA_DEVOLUCION,
+                       al.PRECIO AS PRECIO,
+                       al.ESTADO AS ESTADO,
+                       CASE WHEN al.ESTADO='ACTIVO' AND al.FECHA_DEVOLUCION IS NULL THEN 'Devolver' END AS DEVOLVER,
+                       al.CLIENTE_ID AS CLIENTE_ID,
+                       al.PELICULA_ID AS PELICULA_ID
+                FROM STREAM_ALQUILERES al JOIN STREAM_CLIENTES c ON c.CLIENTE_ID=al.CLIENTE_ID JOIN STREAM_PELICULAS p ON p.PELICULA_ID=al.PELICULA_ID
+                WHERE (LOWER(:P13_SOLO_ACTIVOS)=LOWER('N') OR (LOWER(:P13_SOLO_ACTIVOS)=LOWER('S') AND al.ESTADO='ACTIVO' AND al.FECHA_DEVOLUCION IS NULL))
+                ORDER BY al.FECHA_ALQUILER DESC,al.ALQUILER_ID DESC
+                ```
+            pageItemsToSubmit: "P13_SOLO_ACTIVOS"
+        }
+        layout {
+            sequence: 30
+            slot: body
+        }
+        appearance {
+            template: @/interactive-report
+            templateOptions: #DEFAULT#
+        }
+        messages {
+            whenNoDataFound: "No hay registros para esta selección."
+        }
+        column ALQUILER_ID (
+            type: plainText
+            heading {
+                heading: "ID alquiler"
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: NUMBER
+            }
+            appearance {
+                formatMask: "FM999999999999990"
+            }
+            comments {
+                comments: "Display Label: ID alquiler; Display in Report: True; Display in Form: True; Format Mask: FM999999999999990; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: al.ALQUILER_ID"
+            }
+        )
+        column CLIENTE (
+            type: plainText
+            heading {
+                heading: "Cliente"
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            comments {
+                comments: "Display Label: Cliente; Display in Report: True; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: c.NOMBRE || ' ' || c.APELLIDO"
+            }
+        )
+        column PELICULA (
+            type: plainText
+            heading {
+                heading: "Película"
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            comments {
+                comments: "Display Label: Película; Display in Report: True; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: p.TITULO"
+            }
+        )
+        column FECHA_ALQUILER (
+            type: plainText
+            heading {
+                heading: "Alquiler"
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: DATE
+            }
+            appearance {
+                formatMask: "YYYY-MM-DD HH24:MI:SS"
+            }
+            comments {
+                comments: "Display Label: Alquiler; Display in Report: True; Display in Form: True; Format Mask: YYYY-MM-DD HH24:MI:SS; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: CAST(al.FECHA_ALQUILER AS DATE)"
+            }
+        )
+        column FECHA_VENCIMIENTO (
+            type: plainText
+            heading {
+                heading: "Vencimiento"
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: DATE
+            }
+            appearance {
+                formatMask: "YYYY-MM-DD HH24:MI:SS"
+            }
+            comments {
+                comments: "Display Label: Vencimiento; Display in Report: True; Display in Form: True; Format Mask: YYYY-MM-DD HH24:MI:SS; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: CAST(al.FECHA_VENCIMIENTO AS DATE)"
+            }
+        )
+        column FECHA_DEVOLUCION (
+            type: plainText
+            heading {
+                heading: "Devolución"
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: DATE
+            }
+            appearance {
+                formatMask: "YYYY-MM-DD HH24:MI:SS"
+            }
+            comments {
+                comments: "Display Label: Devolución; Display in Report: True; Display in Form: True; Format Mask: YYYY-MM-DD HH24:MI:SS; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: CAST(al.FECHA_DEVOLUCION AS DATE)"
+            }
+        )
+        column PRECIO (
+            type: plainText
+            heading {
+                heading: "Precio"
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: NUMBER
+            }
+            appearance {
+                formatMask: "FM999999990D00"
+            }
+            comments {
+                comments: "Display Label: Precio; Display in Report: True; Display in Form: True; Format Mask: FM999999990D00; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: al.PRECIO"
+            }
+        )
+        column ESTADO (
+            type: plainText
+            heading {
+                heading: "Estado"
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            comments {
+                comments: "Display Label: Estado; Display in Report: True; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: al.ESTADO"
+            }
+        )
+        column DEVOLVER (
+            type: plainText
+            heading {
+                heading: "Operación"
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: STRING
+            }
+            link {
+                target: {
+                    page: 15
+                    items {
+                        P15_ALQUILER_ID: "#ALQUILER_ID#"
+                    }
+                    clearCache: "15"
+                }
+                linkText: "#DEVOLVER#"
+            }
+            comments {
+                comments: "Display Label: Operación; Display in Report: True; Display in Form: False; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: CASE WHEN al.ESTADO='ACTIVO' AND al.FECHA_DEVOLUCION IS NULL THEN 'Devolver' END"
+            }
+        )
+        column CLIENTE_ID (
+            type: hidden
+            heading {
+                heading: "ID cliente"
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: NUMBER
+            }
+            comments {
+                comments: "Display Label: ID cliente; Display in Report: False; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: al.CLIENTE_ID"
+            }
+        )
+        column PELICULA_ID (
+            type: hidden
+            heading {
+                heading: "ID película"
+            }
+            layout {
+                sequence: 110
+            }
+            source {
+                dataType: NUMBER
+            }
+            comments {
+                comments: "Display Label: ID película; Display in Report: False; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: al.PELICULA_ID"
+            }
+        )
+    )
+    button nuevo (
+        buttonName: NUEVO
+        label: "Nuevo"
+        layout {
+            sequence: 10
+            region: @ir-alquileres
+            slot: rightOfIRSearchBar
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 14
+                clearCache: "14"
+            }
+        }
+    )
+    dynamicAction refrescar-guardar (
+        name: "refrescar-guardar"
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @ir-alquileres
+        }
+        action ejecutar (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @ir-alquileres
+            }
+            execution {
+                sequence: 10
+                event: @refrescar-guardar
+                fireOnInit: false
+            }
+        )
+    )
+    dynamicAction refrescar-cancelar (
+        name: "refrescar-cancelar"
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosecanceldialog
+            selectionType: region
+            region: @ir-alquileres
+        }
+        action ejecutar (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @ir-alquileres
+            }
+            execution {
+                sequence: 10
+                event: @refrescar-cancelar
+                fireOnInit: false
+            }
+        )
+    )
+)

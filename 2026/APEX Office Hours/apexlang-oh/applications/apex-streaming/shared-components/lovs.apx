@@ -1,0 +1,164 @@
+lov generos (
+    name: GENEROS
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            SELECT NOMBRE AS DISPLAY_VALUE, GENERO_ID AS RETURN_VALUE
+            FROM STREAM_GENEROS
+            ORDER BY NOMBRE,GENERO_ID
+            ```
+    }
+    columnMapping {
+        display: DISPLAY_VALUE
+        return: RETURN_VALUE
+    }
+)
+lov actores (
+    name: ACTORES
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            SELECT NOMBRE||' '||APELLIDO||' ('||TO_CHAR(ACTOR_ID)||')' AS DISPLAY_VALUE, ACTOR_ID AS RETURN_VALUE
+            FROM STREAM_ACTORES
+            ORDER BY APELLIDO,NOMBRE,ACTOR_ID
+            ```
+    }
+    columnMapping {
+        display: DISPLAY_VALUE
+        return: RETURN_VALUE
+    }
+)
+lov clientes-alquiler (
+    name: CLIENTES_ALQUILER
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            SELECT NOMBRE||' '||APELLIDO||' - '||EMAIL AS DISPLAY_VALUE, CLIENTE_ID AS RETURN_VALUE
+            FROM STREAM_CLIENTES WHERE ACTIVO='S'
+            ORDER BY APELLIDO,NOMBRE,CLIENTE_ID
+            ```
+    }
+    columnMapping {
+        display: DISPLAY_VALUE
+        return: RETURN_VALUE
+    }
+)
+lov peliculas-alquiler (
+    name: PELICULAS_ALQUILER
+    source {
+        type: sqlQuery
+        sqlQuery:
+            ```sql
+            SELECT TITULO||' ('||TO_CHAR(PELICULA_ID)||')' AS DISPLAY_VALUE, PELICULA_ID AS RETURN_VALUE
+            FROM STREAM_PELICULAS WHERE ACTIVO='S'
+            ORDER BY TITULO,FECHA_ESTRENO,PELICULA_ID
+            ```
+    }
+    columnMapping {
+        display: DISPLAY_VALUE
+        return: RETURN_VALUE
+    }
+)
+lov estados-genero (
+    name: ESTADOS_GENERO
+    source {
+        location: staticValues
+    }
+    entry v1 (
+        sequence: 10
+        display: "Activo"
+        return: "ACTIVO"
+    )
+    entry v2 (
+        sequence: 20
+        display: "Inactivo"
+        return: "INACTIVO"
+    )
+)
+lov si-no (
+    name: SI_NO
+    source {
+        location: staticValues
+    }
+    entry v1 (
+        sequence: 10
+        display: "Sí"
+        return: "S"
+    )
+    entry v2 (
+        sequence: 20
+        display: "No"
+        return: "N"
+    )
+)
+lov clasificaciones (
+    name: CLASIFICACIONES
+    source {
+        location: staticValues
+    }
+    entry v1 (
+        sequence: 10
+        display: "G"
+        return: "G"
+    )
+    entry v2 (
+        sequence: 20
+        display: "PG"
+        return: "PG"
+    )
+    entry v3 (
+        sequence: 30
+        display: "PG-13"
+        return: "PG-13"
+    )
+    entry v4 (
+        sequence: 40
+        display: "R"
+        return: "R"
+    )
+    entry v5 (
+        sequence: 50
+        display: "NC-17"
+        return: "NC-17"
+    )
+    entry v6 (
+        sequence: 60
+        display: "NR"
+        return: "NR"
+    )
+)
+lov genero-cliente (
+    name: GENERO_CLIENTE
+    source {
+        location: staticValues
+    }
+    entry v1 (
+        sequence: 10
+        display: "F"
+        return: "F"
+    )
+    entry v2 (
+        sequence: 20
+        display: "M"
+        return: "M"
+    )
+)
+lov alcance-alquileres (
+    name: ALCANCE_ALQUILERES
+    source {
+        location: staticValues
+    }
+    entry v1 (
+        sequence: 10
+        display: "Todos"
+        return: "N"
+    )
+    entry v2 (
+        sequence: 20
+        display: "Solo activos operativos"
+        return: "S"
+    )
+)

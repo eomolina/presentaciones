@@ -1,0 +1,132 @@
+page 9999 (
+    page: 9999
+    name: "Login"
+    alias: LOGIN
+    title: "Login"
+    appearance {
+        pageMode: normal
+        pageTemplate: @/login
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: public
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    help {
+        helpText: "Acceda con su cuenta Oracle APEX."
+    }
+    region acceso (
+        name: "Acceso"
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @/login
+            templateOptions: #DEFAULT#
+        }
+    )
+    pageItem P9999_USERNAME (
+        type: textField
+        label {
+            label: "Usuario"
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @acceso
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        help {
+            helpText: "Indique Usuario. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+        sessionState {
+            storage: request
+        }
+    )
+    pageItem P9999_PASSWORD (
+        type: password
+        label {
+            label: "Contraseña"
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @acceso
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        help {
+            helpText: "Indique Contraseña. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+        sessionState {
+            storage: request
+        }
+    )
+    button login (
+        buttonName: LOGIN
+        label: "Ingresar"
+        layout {
+            sequence: 10
+            region: @acceso
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            executeValidations: true
+        }
+    )
+    process autenticar (
+        name: "Autenticar"
+        type: invokeApi
+        invoke {
+            package: APEX_AUTHENTICATION
+            procedureOrFunction: LOGIN
+        }
+        execution {
+            sequence: 20
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "LOGIN"
+        }
+        parameter p_username (
+            value {
+                type: item
+                item: P9999_USERNAME
+            }
+            advanced {
+                displaySequence: 1
+            }
+        )
+        parameter p_password (
+            value {
+                type: item
+                item: P9999_PASSWORD
+            }
+            advanced {
+                displaySequence: 2
+            }
+        )
+    )
+)

@@ -1,0 +1,308 @@
+page 11 (
+    page: 11
+    name: "Clientes"
+    alias: CLIENTES
+    title: "Clientes"
+    appearance {
+        pageMode: normal
+        pageTemplate: @/standard
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        authorizationScheme: mustNotBePublicUser
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    help {
+        helpText: "Consulte Clientes. Los cambios se guardan al confirmar; Cancelar conserva los datos existentes."
+    }
+    region bc-clientes (
+        name: "Clientes"
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @/title-bar
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            breadcrumbTemplate: @/breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+    region ir-clientes (
+        name: "Clientes"
+        type: interactiveReport
+        source {
+            location: localDatabase
+            type: sqlQuery
+            sqlQuery:
+                ```sql
+                SELECT c.CLIENTE_ID AS CLIENTE_ID,
+                       c.NOMBRE AS NOMBRE,
+                       c.APELLIDO AS APELLIDO,
+                       c.EMAIL AS EMAIL,
+                       c.PAIS AS PAIS,
+                       c.CIUDAD AS CIUDAD,
+                       c.FECHA_NACIMIENTO AS FECHA_NACIMIENTO,
+                       c.GENERO AS GENERO,
+                       CAST(c.FECHA_REGISTRO AS DATE) AS FECHA_REGISTRO,
+                       c.ACTIVO AS ACTIVO
+                FROM STREAM_CLIENTES c
+                ORDER BY c.APELLIDO,c.NOMBRE,c.CLIENTE_ID
+                ```
+        }
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @/interactive-report
+            templateOptions: #DEFAULT#
+        }
+        messages {
+            whenNoDataFound: "No hay registros para esta selección."
+        }
+        column CLIENTE_ID (
+            type: plainText
+            heading {
+                heading: "ID cliente"
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: NUMBER
+            }
+            appearance {
+                formatMask: "FM999999999999990"
+            }
+            link {
+                target: {
+                    page: 12
+                    items {
+                        P12_CLIENTE_ID: "#CLIENTE_ID#"
+                    }
+                    clearCache: "12"
+                }
+                linkText: "#CLIENTE_ID#"
+            }
+            comments {
+                comments: "Display Label: ID cliente; Display in Report: True; Display in Form: True; Format Mask: FM999999999999990; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: c.CLIENTE_ID"
+            }
+        )
+        column NOMBRE (
+            type: plainText
+            heading {
+                heading: "Nombre"
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            comments {
+                comments: "Display Label: Nombre; Display in Report: True; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: True; Authorization Scheme: authenticated. Source: c.NOMBRE"
+            }
+        )
+        column APELLIDO (
+            type: plainText
+            heading {
+                heading: "Apellido"
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            comments {
+                comments: "Display Label: Apellido; Display in Report: True; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: c.APELLIDO"
+            }
+        )
+        column EMAIL (
+            type: plainText
+            heading {
+                heading: "Email"
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            comments {
+                comments: "Display Label: Email; Display in Report: True; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: c.EMAIL"
+            }
+        )
+        column PAIS (
+            type: plainText
+            heading {
+                heading: "País"
+            }
+            layout {
+                sequence: 50
+            }
+            source {
+                dataType: STRING
+            }
+            comments {
+                comments: "Display Label: País; Display in Report: True; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: c.PAIS"
+            }
+        )
+        column CIUDAD (
+            type: plainText
+            heading {
+                heading: "Ciudad"
+            }
+            layout {
+                sequence: 60
+            }
+            source {
+                dataType: STRING
+            }
+            comments {
+                comments: "Display Label: Ciudad; Display in Report: True; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: c.CIUDAD"
+            }
+        )
+        column FECHA_NACIMIENTO (
+            type: plainText
+            heading {
+                heading: "Nacimiento"
+            }
+            layout {
+                sequence: 70
+            }
+            source {
+                dataType: DATE
+            }
+            appearance {
+                formatMask: "YYYY-MM-DD HH24:MI:SS"
+            }
+            comments {
+                comments: "Display Label: Nacimiento; Display in Report: True; Display in Form: True; Format Mask: YYYY-MM-DD HH24:MI:SS; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: c.FECHA_NACIMIENTO"
+            }
+        )
+        column GENERO (
+            type: plainText
+            heading {
+                heading: "Género del cliente"
+            }
+            layout {
+                sequence: 80
+            }
+            source {
+                dataType: STRING
+            }
+            comments {
+                comments: "Display Label: Género del cliente; Display in Report: True; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: c.GENERO"
+            }
+        )
+        column FECHA_REGISTRO (
+            type: plainText
+            heading {
+                heading: "Registro"
+            }
+            layout {
+                sequence: 90
+            }
+            source {
+                dataType: DATE
+            }
+            appearance {
+                formatMask: "YYYY-MM-DD HH24:MI:SS"
+            }
+            comments {
+                comments: "Display Label: Registro; Display in Report: True; Display in Form: True; Format Mask: YYYY-MM-DD HH24:MI:SS; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: CAST(c.FECHA_REGISTRO AS DATE)"
+            }
+        )
+        column ACTIVO (
+            type: plainText
+            heading {
+                heading: "Activo"
+            }
+            layout {
+                sequence: 100
+            }
+            source {
+                dataType: STRING
+            }
+            comments {
+                comments: "Display Label: Activo; Display in Report: True; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: c.ACTIVO"
+            }
+        )
+    )
+    button nuevo (
+        buttonName: NUEVO
+        label: "Nuevo"
+        layout {
+            sequence: 10
+            region: @ir-clientes
+            slot: rightOfIRSearchBar
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 12
+                clearCache: "12"
+            }
+        }
+    )
+    dynamicAction refrescar-guardar (
+        name: "refrescar-guardar"
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @ir-clientes
+        }
+        action ejecutar (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @ir-clientes
+            }
+            execution {
+                sequence: 10
+                event: @refrescar-guardar
+                fireOnInit: false
+            }
+        )
+    )
+    dynamicAction refrescar-cancelar (
+        name: "refrescar-cancelar"
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosecanceldialog
+            selectionType: region
+            region: @ir-clientes
+        }
+        action ejecutar (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @ir-clientes
+            }
+            execution {
+                sequence: 10
+                event: @refrescar-cancelar
+                fireOnInit: false
+            }
+        )
+    )
+)

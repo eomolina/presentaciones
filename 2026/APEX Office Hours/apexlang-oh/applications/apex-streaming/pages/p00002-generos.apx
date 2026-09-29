@@ -1,0 +1,198 @@
+page 2 (
+    page: 2
+    name: "Géneros"
+    alias: GENEROS
+    title: "Géneros"
+    appearance {
+        pageMode: normal
+        pageTemplate: @/standard
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        authorizationScheme: mustNotBePublicUser
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    help {
+        helpText: "Consulte Géneros. Los cambios se guardan al confirmar; Cancelar conserva los datos existentes."
+    }
+    region bc-generos (
+        name: "Géneros"
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @/title-bar
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            breadcrumbTemplate: @/breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+    region ir-generos (
+        name: "Géneros"
+        type: interactiveReport
+        source {
+            location: localDatabase
+            tableName: STREAM_GENEROS
+            orderByClause: "NOMBRE, GENERO_ID"
+        }
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @/interactive-report
+            templateOptions: #DEFAULT#
+        }
+        messages {
+            whenNoDataFound: "No hay registros para esta selección."
+        }
+        column GENERO_ID (
+            type: plainText
+            heading {
+                heading: "ID género"
+            }
+            layout {
+                sequence: 10
+            }
+            source {
+                dataType: NUMBER
+            }
+            appearance {
+                formatMask: "FM999999999999990"
+            }
+            link {
+                target: {
+                    page: 3
+                    items {
+                        P3_GENERO_ID: "#GENERO_ID#"
+                    }
+                    clearCache: "3"
+                }
+                linkText: "#GENERO_ID#"
+            }
+            comments {
+                comments: "Display Label: ID género; Display in Report: True; Display in Form: True; Format Mask: FM999999999999990; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: GENERO_ID"
+            }
+        )
+        column NOMBRE (
+            type: plainText
+            heading {
+                heading: "Nombre"
+            }
+            layout {
+                sequence: 20
+            }
+            source {
+                dataType: STRING
+            }
+            comments {
+                comments: "Display Label: Nombre; Display in Report: True; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: True; Authorization Scheme: authenticated. Source: NOMBRE"
+            }
+        )
+        column DESCRIPCION (
+            type: plainText
+            heading {
+                heading: "Descripción"
+            }
+            layout {
+                sequence: 30
+            }
+            source {
+                dataType: STRING
+            }
+            comments {
+                comments: "Display Label: Descripción; Display in Report: True; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: DESCRIPCION"
+            }
+        )
+        column ESTADO (
+            type: plainText
+            heading {
+                heading: "Estado"
+            }
+            layout {
+                sequence: 40
+            }
+            source {
+                dataType: STRING
+            }
+            comments {
+                comments: "Display Label: Estado; Display in Report: True; Display in Form: True; Format Mask: none; Value Required: see schema; Read Only: true; Primary Display Column: False; Authorization Scheme: authenticated. Source: ESTADO"
+            }
+        )
+    )
+    button nuevo (
+        buttonName: NUEVO
+        label: "Nuevo"
+        layout {
+            sequence: 10
+            region: @ir-generos
+            slot: rightOfIRSearchBar
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: redirectThisApp
+            target: {
+                page: 3
+                clearCache: "3"
+            }
+        }
+    )
+    dynamicAction refrescar-guardar (
+        name: "refrescar-guardar"
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosedialog
+            selectionType: region
+            region: @ir-generos
+        }
+        action ejecutar (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @ir-generos
+            }
+            execution {
+                sequence: 10
+                event: @refrescar-guardar
+                fireOnInit: false
+            }
+        )
+    )
+    dynamicAction refrescar-cancelar (
+        name: "refrescar-cancelar"
+        execution {
+            sequence: 10
+        }
+        when {
+            event: apexafterclosecanceldialog
+            selectionType: region
+            region: @ir-generos
+        }
+        action ejecutar (
+            action: refresh
+            affectedElements {
+                selectionType: region
+                region: @ir-generos
+            }
+            execution {
+                sequence: 10
+                event: @refrescar-cancelar
+                fireOnInit: false
+            }
+        )
+    )
+)

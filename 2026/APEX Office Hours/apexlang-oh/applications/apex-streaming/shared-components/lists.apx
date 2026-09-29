@@ -1,0 +1,158 @@
+list navigation-menu (
+    name: "Navegación"
+    entry dashboard (
+        label: "Dashboard"
+        layout {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 1
+                clearCache: "1"
+            }
+        }
+        isCurrent {
+            type: pages
+            pages: "1"
+        }
+    )
+    entry generos (
+        label: "Géneros"
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                page: 2
+                clearCache: "2"
+            }
+        }
+        isCurrent {
+            type: pages
+            pages: "2"
+        }
+    )
+    entry peliculas (
+        label: "Películas"
+        layout {
+            sequence: 30
+        }
+        link {
+            target: {
+                page: 4
+                clearCache: "4"
+            }
+        }
+        isCurrent {
+            type: pages
+            pages: "4"
+        }
+    )
+    entry actores (
+        label: "Actores"
+        layout {
+            sequence: 40
+        }
+        link {
+            target: {
+                page: 8
+                clearCache: "8"
+            }
+        }
+        isCurrent {
+            type: pages
+            pages: "8"
+        }
+    )
+    entry clientes (
+        label: "Clientes"
+        layout {
+            sequence: 50
+        }
+        link {
+            target: {
+                page: 11
+                clearCache: "11"
+            }
+        }
+        isCurrent {
+            type: pages
+            pages: "11"
+        }
+    )
+    entry alquileres (
+        label: "Alquileres"
+        layout {
+            sequence: 60
+        }
+        link {
+            target: {
+                page: 13
+                items {
+                    P13_SOLO_ACTIVOS: "N"
+                }
+                clearCache: "13"
+            }
+        }
+        isCurrent {
+            type: pages
+            pages: "13"
+        }
+    )
+    entry vencimientos (
+        label: "Vencimientos"
+        layout {
+            sequence: 70
+        }
+        link {
+            target: {
+                page: 16
+                clearCache: "16"
+            }
+        }
+        isCurrent {
+            type: pages
+            pages: "16"
+        }
+    )
+    entry estadisticas (
+        label: "Estadísticas"
+        layout {
+            sequence: 80
+        }
+        link {
+            target: {
+                page: 17
+                clearCache: "17"
+            }
+        }
+        isCurrent {
+            type: pages
+            pages: "17"
+        }
+    )
+)
+list navigation-bar (
+    name: "Sesión"
+    entry usuario (
+        label: "&APP_USER."
+        layout {
+            sequence: 10
+        }
+    )
+    entry salir (
+        label: "Cerrar sesión"
+        layout {
+            sequence: 20
+        }
+        link {
+            target: {
+                type: url
+                url: "&LOGOUT_URL."
+            }
+        }
+        serverSideCondition {
+            type: userIsAuthenticated
+        }
+    )
+)

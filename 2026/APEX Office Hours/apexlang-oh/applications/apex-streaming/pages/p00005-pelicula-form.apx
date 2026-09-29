@@ -1,0 +1,582 @@
+page 5 (
+    page: 5
+    name: "Película"
+    alias: PELICULA-FORM
+    title: "Película"
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @/modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        authorizationScheme: mustNotBePublicUser
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    help {
+        helpText: "Consulte Película. Los cambios se guardan al confirmar; Cancelar conserva los datos existentes."
+    }
+    region form-pelicula (
+        name: "Película"
+        type: form
+        source {
+            location: localDatabase
+            tableName: STREAM_PELICULAS
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+        }
+    )
+    region botones-pelicula (
+        name: "Acciones"
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: REGION_POSITION_03
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: #DEFAULT#
+        }
+    )
+    pageItem P5_PELICULA_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @form-pelicula
+            slot: regionBody
+        }
+        source {
+            formRegion: @form-pelicula
+            column: PELICULA_ID
+            dataType: number
+            primaryKey: true
+            queryOnly: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+    pageItem P5_TITULO (
+        type: textField
+        label {
+            label: "Titulo"
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @form-pelicula
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-pelicula
+            column: TITULO
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Titulo. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P5_DESCRIPCION (
+        type: textarea
+        label {
+            label: "Descripcion"
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @form-pelicula
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        source {
+            formRegion: @form-pelicula
+            column: DESCRIPCION
+            dataType: clob
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Descripcion. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P5_GENERO_ID (
+        type: selectList
+        label {
+            label: "Genero id"
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @form-pelicula
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        lov {
+            type: sharedComponent
+            lov: @generos
+            displayNullValue: true
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-pelicula
+            column: GENERO_ID
+            dataType: number
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Genero id. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P5_ANIO (
+        type: numberField
+        label {
+            label: "Anio"
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @form-pelicula
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-pelicula
+            column: ANIO
+            dataType: number
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Anio. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P5_DURACION_MINUTOS (
+        type: numberField
+        label {
+            label: "Duracion minutos"
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @form-pelicula
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-pelicula
+            column: DURACION_MINUTOS
+            dataType: number
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Duracion minutos. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P5_CLASIFICACION (
+        type: selectList
+        label {
+            label: "Clasificacion"
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @form-pelicula
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        lov {
+            type: sharedComponent
+            lov: @clasificaciones
+            displayNullValue: true
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-pelicula
+            column: CLASIFICACION
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Clasificacion. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P5_PAIS_ORIGEN (
+        type: textField
+        label {
+            label: "Pais origen"
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @form-pelicula
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-pelicula
+            column: PAIS_ORIGEN
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Pais origen. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P5_FECHA_ESTRENO (
+        type: datePicker
+        label {
+            label: "Fecha estreno"
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @form-pelicula
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+            formatMask: "YYYY-MM-DD HH24:MI:SS"
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-pelicula
+            column: FECHA_ESTRENO
+            dataType: date
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Fecha estreno. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P5_IDIOMA (
+        type: textField
+        label {
+            label: "Idioma"
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @form-pelicula
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-pelicula
+            column: IDIOMA
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Idioma. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P5_RATING (
+        type: numberField
+        label {
+            label: "Rating"
+            alignment: left
+        }
+        layout {
+            sequence: 110
+            region: @form-pelicula
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+            formatMask: "FM990D0"
+        }
+        source {
+            formRegion: @form-pelicula
+            column: RATING
+            dataType: number
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Rating. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P5_ACTIVO (
+        type: selectList
+        label {
+            label: "Activo"
+            alignment: left
+        }
+        layout {
+            sequence: 120
+            region: @form-pelicula
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        lov {
+            type: sharedComponent
+            lov: @si-no
+            displayNullValue: true
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-pelicula
+            column: ACTIVO
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Activo. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    process init-pelicula (
+        name: "init-pelicula"
+        type: formInitialization
+        formRegion: @form-pelicula
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+    )
+    process defaults-pelicula (
+        name: "defaults-pelicula"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                :P5_ACTIVO := 'S';
+                END;
+                ```
+        }
+        execution {
+            sequence: 30
+            point: beforeHeader
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P5_PELICULA_ID
+        }
+    )
+    button create (
+        buttonName: CREATE
+        label: "Guardar"
+        layout {
+            sequence: 10
+            region: @botones-pelicula
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: insert
+            executeValidations: true
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P5_PELICULA_ID
+        }
+    )
+    button save (
+        buttonName: SAVE
+        label: "Guardar"
+        layout {
+            sequence: 20
+            region: @botones-pelicula
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: update
+            executeValidations: true
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P5_PELICULA_ID
+        }
+    )
+    button delete (
+        buttonName: DELETE
+        label: "Eliminar"
+        layout {
+            sequence: 30
+            region: @botones-pelicula
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: delete
+            executeValidations: false
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: "Se eliminará el registro. También se eliminarán sus participaciones en el reparto."
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P5_PELICULA_ID
+        }
+    )
+    process comprobar-operacion (
+        name: "comprobar-operacion"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                 IF :REQUEST = 'CREATE' AND :P5_PELICULA_ID IS NOT NULL THEN
+                  RAISE_APPLICATION_ERROR(-20030,'El alta no admite identificador existente.');
+                 ELSIF :REQUEST IN ('SAVE','DELETE') AND (:P5_PELICULA_ID IS NULL OR 5=14) THEN
+                  RAISE_APPLICATION_ERROR(-20031,'La operación no corresponde al registro.');
+                 END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 5
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+    button cancel (
+        buttonName: CANCEL
+        label: "Cancelar"
+        layout {
+            sequence: 40
+            region: @botones-pelicula
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+    dynamicAction cancelar (
+        name: "cancelar"
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+        action ejecutar (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                event: @cancelar
+                fireOnInit: false
+            }
+        )
+    )
+    process arp-pelicula (
+        name: "arp-pelicula"
+        type: formAutoRowProcessing
+        formRegion: @form-pelicula
+        execution {
+            sequence: 30
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+    process cerrar-pelicula (
+        name: "cerrar-pelicula"
+        type: closeDialog
+        execution {
+            sequence: 100
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+)

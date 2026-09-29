@@ -1,0 +1,156 @@
+breadcrumb breadcrumb (
+    name: "Navegación"
+    entry bc-dashboard (
+        name: "Dashboard"
+        pageNumber: 1
+        execution {
+            sequence: 10
+        }
+        link {
+            target: {
+                page: 1
+            }
+        }
+    )
+    entry bc-generos (
+        name: "Géneros"
+        pageNumber: 2
+        execution {
+            sequence: 20
+        }
+        appearance {
+            parentEntry: @bc-dashboard
+        }
+        link {
+            target: {
+                page: 2
+            }
+        }
+    )
+    entry bc-peliculas (
+        name: "Películas"
+        pageNumber: 4
+        execution {
+            sequence: 40
+        }
+        appearance {
+            parentEntry: @bc-dashboard
+        }
+        link {
+            target: {
+                page: 4
+            }
+        }
+    )
+    entry bc-reparto (
+        name: "Reparto"
+        pageNumber: 6
+        execution {
+            sequence: 60
+        }
+        appearance {
+            parentEntry: @bc-peliculas
+        }
+        link {
+            target: {
+                page: 6
+                items {
+                    P6_PELICULA_ID: "&P6_PELICULA_ID."
+                }
+            }
+        }
+    )
+    entry bc-actores (
+        name: "Actores"
+        pageNumber: 8
+        execution {
+            sequence: 80
+        }
+        appearance {
+            parentEntry: @bc-dashboard
+        }
+        link {
+            target: {
+                page: 8
+            }
+        }
+    )
+    entry bc-filmografia (
+        name: "Filmografía"
+        pageNumber: 10
+        execution {
+            sequence: 100
+        }
+        appearance {
+            parentEntry: @bc-actores
+        }
+        link {
+            target: {
+                page: 10
+                items {
+                    P10_ACTOR_ID: "&P10_ACTOR_ID."
+                }
+            }
+        }
+    )
+    entry bc-clientes (
+        name: "Clientes"
+        pageNumber: 11
+        execution {
+            sequence: 110
+        }
+        appearance {
+            parentEntry: @bc-dashboard
+        }
+        link {
+            target: {
+                page: 11
+            }
+        }
+    )
+    entry bc-alquileres (
+        name: "Alquileres"
+        pageNumber: 13
+        execution {
+            sequence: 130
+        }
+        appearance {
+            parentEntry: @bc-dashboard
+        }
+        link {
+            target: {
+                page: 13
+            }
+        }
+    )
+    entry bc-vencimientos (
+        name: "Vencimientos"
+        pageNumber: 16
+        execution {
+            sequence: 160
+        }
+        appearance {
+            parentEntry: @bc-dashboard
+        }
+        link {
+            target: {
+                page: 16
+            }
+        }
+    )
+    entry bc-estadisticas (
+        name: "Estadísticas"
+        pageNumber: 17
+        execution {
+            sequence: 170
+        }
+        appearance {
+            parentEntry: @bc-dashboard
+        }
+        link {
+            target: {
+                page: 17
+            }
+        }
+    )
+)

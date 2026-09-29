@@ -1,0 +1,581 @@
+page 17 (
+    page: 17
+    name: "Estadísticas"
+    alias: ESTADISTICAS
+    title: "Estadísticas"
+    appearance {
+        pageMode: normal
+        pageTemplate: @/standard
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        authorizationScheme: mustNotBePublicUser
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    help {
+        helpText: "Consulte Estadísticas. Los cambios se guardan al confirmar; Cancelar conserva los datos existentes."
+    }
+    region bc-estadisticas (
+        name: "Estadísticas"
+        type: breadcrumb
+        source {
+            breadcrumb: @breadcrumb
+        }
+        layout {
+            sequence: 10
+            slot: breadcrumbBar
+        }
+        appearance {
+            template: @/title-bar
+            templateOptions: #DEFAULT#
+        }
+        componentAppearance {
+            breadcrumbTemplate: @/breadcrumb
+            templateOptions: #DEFAULT#
+        }
+    )
+    region filtros-estadisticas (
+        name: "Intervalo de alquileres"
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+    )
+    pageItem P17_DESDE (
+        type: datePicker
+        label {
+            label: "Desde (incluido)"
+            alignment: left
+        }
+        layout {
+            sequence: 10
+            region: @filtros-estadisticas
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+            formatMask: "YYYY-MM-DD HH24:MI:SS"
+        }
+        help {
+            helpText: "Indique Desde (incluido). Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P17_HASTA (
+        type: datePicker
+        label {
+            label: "Hasta (excluido)"
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @filtros-estadisticas
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+            formatMask: "YYYY-MM-DD HH24:MI:SS"
+        }
+        help {
+            helpText: "Indique Hasta (excluido). Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    button aplicar (
+        buttonName: APLICAR
+        label: "Aplicar"
+        layout {
+            sequence: 10
+            region: @filtros-estadisticas
+            slot: next
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            executeValidations: true
+        }
+    )
+    validation VAL_INTERVALO (
+        name: "intervalo"
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: expression
+            plsqlExpression:
+                ```plsql
+                :P17_DESDE IS NULL OR :P17_HASTA IS NULL OR TO_DATE(:P17_DESDE,'YYYY-MM-DD HH24:MI:SS') < TO_DATE(:P17_HASTA,'YYYY-MM-DD HH24:MI:SS')
+                ```
+        }
+        error {
+            errorMessage: "Revise intervalo."
+            associatedItem: @P17_HASTA
+        }
+    )
+    region ch-evolucion (
+        name: "Alquileres por mes"
+        type: chart
+        layout {
+            sequence: 30
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        chart {
+            type: line
+        }
+        series activo (
+            name: "ACTIVO"
+            execution {
+                sequence: 10
+            }
+            source {
+                location: localDatabase
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT TO_CHAR(TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM'),'YYYY-MM') AS LABEL, COUNT(*) AS VALUE
+                    FROM STREAM_ALQUILERES al
+                    WHERE (:P17_DESDE IS NULL OR al.FECHA_ALQUILER>=TO_TIMESTAMP(:P17_DESDE,'YYYY-MM-DD HH24:MI:SS')) AND (:P17_HASTA IS NULL OR al.FECHA_ALQUILER<TO_TIMESTAMP(:P17_HASTA,'YYYY-MM-DD HH24:MI:SS')) AND al.ESTADO='ACTIVO'
+                    GROUP BY TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM')
+                    ORDER BY TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM')
+                    ```
+                pageItemsToSubmit: "P17_DESDE,P17_HASTA"
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+        )
+        series finalizado (
+            name: "FINALIZADO"
+            execution {
+                sequence: 20
+            }
+            source {
+                location: localDatabase
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT TO_CHAR(TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM'),'YYYY-MM') AS LABEL, COUNT(*) AS VALUE
+                    FROM STREAM_ALQUILERES al
+                    WHERE (:P17_DESDE IS NULL OR al.FECHA_ALQUILER>=TO_TIMESTAMP(:P17_DESDE,'YYYY-MM-DD HH24:MI:SS')) AND (:P17_HASTA IS NULL OR al.FECHA_ALQUILER<TO_TIMESTAMP(:P17_HASTA,'YYYY-MM-DD HH24:MI:SS')) AND al.ESTADO='FINALIZADO'
+                    GROUP BY TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM')
+                    ORDER BY TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM')
+                    ```
+                pageItemsToSubmit: "P17_DESDE,P17_HASTA"
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+        )
+        series cancelado (
+            name: "CANCELADO"
+            execution {
+                sequence: 30
+            }
+            source {
+                location: localDatabase
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT TO_CHAR(TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM'),'YYYY-MM') AS LABEL, COUNT(*) AS VALUE
+                    FROM STREAM_ALQUILERES al
+                    WHERE (:P17_DESDE IS NULL OR al.FECHA_ALQUILER>=TO_TIMESTAMP(:P17_DESDE,'YYYY-MM-DD HH24:MI:SS')) AND (:P17_HASTA IS NULL OR al.FECHA_ALQUILER<TO_TIMESTAMP(:P17_HASTA,'YYYY-MM-DD HH24:MI:SS')) AND al.ESTADO='CANCELADO'
+                    GROUP BY TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM')
+                    ORDER BY TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM')
+                    ```
+                pageItemsToSubmit: "P17_DESDE,P17_HASTA"
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+        )
+        axis x (
+            name: x
+            title: "Mes de alquiler"
+        )
+        axis y (
+            name: y
+            title: "Cantidad"
+        )
+    )
+    region ch-peliculas (
+        name: "Alquileres por película"
+        type: chart
+        layout {
+            sequence: 40
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        chart {
+            type: bar
+        }
+        series activo (
+            name: "ACTIVO"
+            execution {
+                sequence: 10
+            }
+            source {
+                location: localDatabase
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT TO_CHAR(p.PELICULA_ID)||' - '||p.TITULO AS LABEL, COUNT(*) AS VALUE
+                    FROM STREAM_ALQUILERES al JOIN STREAM_PELICULAS p ON p.PELICULA_ID=al.PELICULA_ID
+                    WHERE (:P17_DESDE IS NULL OR al.FECHA_ALQUILER>=TO_TIMESTAMP(:P17_DESDE,'YYYY-MM-DD HH24:MI:SS')) AND (:P17_HASTA IS NULL OR al.FECHA_ALQUILER<TO_TIMESTAMP(:P17_HASTA,'YYYY-MM-DD HH24:MI:SS')) AND al.ESTADO='ACTIVO'
+                    GROUP BY p.PELICULA_ID,p.TITULO
+                    ORDER BY p.PELICULA_ID
+                    ```
+                pageItemsToSubmit: "P17_DESDE,P17_HASTA"
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+        )
+        series finalizado (
+            name: "FINALIZADO"
+            execution {
+                sequence: 20
+            }
+            source {
+                location: localDatabase
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT TO_CHAR(p.PELICULA_ID)||' - '||p.TITULO AS LABEL, COUNT(*) AS VALUE
+                    FROM STREAM_ALQUILERES al JOIN STREAM_PELICULAS p ON p.PELICULA_ID=al.PELICULA_ID
+                    WHERE (:P17_DESDE IS NULL OR al.FECHA_ALQUILER>=TO_TIMESTAMP(:P17_DESDE,'YYYY-MM-DD HH24:MI:SS')) AND (:P17_HASTA IS NULL OR al.FECHA_ALQUILER<TO_TIMESTAMP(:P17_HASTA,'YYYY-MM-DD HH24:MI:SS')) AND al.ESTADO='FINALIZADO'
+                    GROUP BY p.PELICULA_ID,p.TITULO
+                    ORDER BY p.PELICULA_ID
+                    ```
+                pageItemsToSubmit: "P17_DESDE,P17_HASTA"
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+        )
+        series cancelado (
+            name: "CANCELADO"
+            execution {
+                sequence: 30
+            }
+            source {
+                location: localDatabase
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT TO_CHAR(p.PELICULA_ID)||' - '||p.TITULO AS LABEL, COUNT(*) AS VALUE
+                    FROM STREAM_ALQUILERES al JOIN STREAM_PELICULAS p ON p.PELICULA_ID=al.PELICULA_ID
+                    WHERE (:P17_DESDE IS NULL OR al.FECHA_ALQUILER>=TO_TIMESTAMP(:P17_DESDE,'YYYY-MM-DD HH24:MI:SS')) AND (:P17_HASTA IS NULL OR al.FECHA_ALQUILER<TO_TIMESTAMP(:P17_HASTA,'YYYY-MM-DD HH24:MI:SS')) AND al.ESTADO='CANCELADO'
+                    GROUP BY p.PELICULA_ID,p.TITULO
+                    ORDER BY p.PELICULA_ID
+                    ```
+                pageItemsToSubmit: "P17_DESDE,P17_HASTA"
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+        )
+        axis x (
+            name: x
+            title: "Alquileres por película"
+        )
+        axis y (
+            name: y
+            title: "Cantidad"
+        )
+    )
+    region ch-generos-alquiler (
+        name: "Alquileres por género"
+        type: chart
+        layout {
+            sequence: 50
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        chart {
+            type: bar
+        }
+        series activo (
+            name: "ACTIVO"
+            execution {
+                sequence: 10
+            }
+            source {
+                location: localDatabase
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT TO_CHAR(g.GENERO_ID)||' - '||g.NOMBRE AS LABEL, COUNT(*) AS VALUE
+                    FROM STREAM_ALQUILERES al JOIN STREAM_PELICULAS p ON p.PELICULA_ID=al.PELICULA_ID JOIN STREAM_GENEROS g ON g.GENERO_ID=p.GENERO_ID
+                    WHERE (:P17_DESDE IS NULL OR al.FECHA_ALQUILER>=TO_TIMESTAMP(:P17_DESDE,'YYYY-MM-DD HH24:MI:SS')) AND (:P17_HASTA IS NULL OR al.FECHA_ALQUILER<TO_TIMESTAMP(:P17_HASTA,'YYYY-MM-DD HH24:MI:SS')) AND al.ESTADO='ACTIVO'
+                    GROUP BY g.GENERO_ID,g.NOMBRE
+                    ORDER BY g.GENERO_ID
+                    ```
+                pageItemsToSubmit: "P17_DESDE,P17_HASTA"
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+        )
+        series finalizado (
+            name: "FINALIZADO"
+            execution {
+                sequence: 20
+            }
+            source {
+                location: localDatabase
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT TO_CHAR(g.GENERO_ID)||' - '||g.NOMBRE AS LABEL, COUNT(*) AS VALUE
+                    FROM STREAM_ALQUILERES al JOIN STREAM_PELICULAS p ON p.PELICULA_ID=al.PELICULA_ID JOIN STREAM_GENEROS g ON g.GENERO_ID=p.GENERO_ID
+                    WHERE (:P17_DESDE IS NULL OR al.FECHA_ALQUILER>=TO_TIMESTAMP(:P17_DESDE,'YYYY-MM-DD HH24:MI:SS')) AND (:P17_HASTA IS NULL OR al.FECHA_ALQUILER<TO_TIMESTAMP(:P17_HASTA,'YYYY-MM-DD HH24:MI:SS')) AND al.ESTADO='FINALIZADO'
+                    GROUP BY g.GENERO_ID,g.NOMBRE
+                    ORDER BY g.GENERO_ID
+                    ```
+                pageItemsToSubmit: "P17_DESDE,P17_HASTA"
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+        )
+        series cancelado (
+            name: "CANCELADO"
+            execution {
+                sequence: 30
+            }
+            source {
+                location: localDatabase
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT TO_CHAR(g.GENERO_ID)||' - '||g.NOMBRE AS LABEL, COUNT(*) AS VALUE
+                    FROM STREAM_ALQUILERES al JOIN STREAM_PELICULAS p ON p.PELICULA_ID=al.PELICULA_ID JOIN STREAM_GENEROS g ON g.GENERO_ID=p.GENERO_ID
+                    WHERE (:P17_DESDE IS NULL OR al.FECHA_ALQUILER>=TO_TIMESTAMP(:P17_DESDE,'YYYY-MM-DD HH24:MI:SS')) AND (:P17_HASTA IS NULL OR al.FECHA_ALQUILER<TO_TIMESTAMP(:P17_HASTA,'YYYY-MM-DD HH24:MI:SS')) AND al.ESTADO='CANCELADO'
+                    GROUP BY g.GENERO_ID,g.NOMBRE
+                    ORDER BY g.GENERO_ID
+                    ```
+                pageItemsToSubmit: "P17_DESDE,P17_HASTA"
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+        )
+        axis x (
+            name: x
+            title: "Alquileres por género"
+        )
+        axis y (
+            name: y
+            title: "Cantidad"
+        )
+    )
+    region ch-importes (
+        name: "Precios registrados por mes y estado"
+        type: chart
+        layout {
+            sequence: 60
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        chart {
+            type: bar
+        }
+        series activo (
+            name: "ACTIVO"
+            execution {
+                sequence: 10
+            }
+            source {
+                location: localDatabase
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT TO_CHAR(TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM'),'YYYY-MM') AS LABEL, SUM(al.PRECIO) AS VALUE
+                    FROM STREAM_ALQUILERES al
+                    WHERE (:P17_DESDE IS NULL OR al.FECHA_ALQUILER>=TO_TIMESTAMP(:P17_DESDE,'YYYY-MM-DD HH24:MI:SS')) AND (:P17_HASTA IS NULL OR al.FECHA_ALQUILER<TO_TIMESTAMP(:P17_HASTA,'YYYY-MM-DD HH24:MI:SS')) AND al.ESTADO='ACTIVO'
+                    GROUP BY TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM')
+                    ORDER BY TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM')
+                    ```
+                pageItemsToSubmit: "P17_DESDE,P17_HASTA"
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+        )
+        series finalizado (
+            name: "FINALIZADO"
+            execution {
+                sequence: 20
+            }
+            source {
+                location: localDatabase
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT TO_CHAR(TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM'),'YYYY-MM') AS LABEL, SUM(al.PRECIO) AS VALUE
+                    FROM STREAM_ALQUILERES al
+                    WHERE (:P17_DESDE IS NULL OR al.FECHA_ALQUILER>=TO_TIMESTAMP(:P17_DESDE,'YYYY-MM-DD HH24:MI:SS')) AND (:P17_HASTA IS NULL OR al.FECHA_ALQUILER<TO_TIMESTAMP(:P17_HASTA,'YYYY-MM-DD HH24:MI:SS')) AND al.ESTADO='FINALIZADO'
+                    GROUP BY TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM')
+                    ORDER BY TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM')
+                    ```
+                pageItemsToSubmit: "P17_DESDE,P17_HASTA"
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+        )
+        series cancelado (
+            name: "CANCELADO"
+            execution {
+                sequence: 30
+            }
+            source {
+                location: localDatabase
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT TO_CHAR(TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM'),'YYYY-MM') AS LABEL, SUM(al.PRECIO) AS VALUE
+                    FROM STREAM_ALQUILERES al
+                    WHERE (:P17_DESDE IS NULL OR al.FECHA_ALQUILER>=TO_TIMESTAMP(:P17_DESDE,'YYYY-MM-DD HH24:MI:SS')) AND (:P17_HASTA IS NULL OR al.FECHA_ALQUILER<TO_TIMESTAMP(:P17_HASTA,'YYYY-MM-DD HH24:MI:SS')) AND al.ESTADO='CANCELADO'
+                    GROUP BY TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM')
+                    ORDER BY TRUNC(CAST(al.FECHA_ALQUILER AS DATE),'MM')
+                    ```
+                pageItemsToSubmit: "P17_DESDE,P17_HASTA"
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+        )
+        axis x (
+            name: x
+            title: "Mes de alquiler"
+        )
+        axis y (
+            name: y
+            title: "Precio registrado"
+        )
+    )
+    region ch-catalogo (
+        name: "Películas por género (sin filtro temporal)"
+        type: chart
+        layout {
+            sequence: 70
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        chart {
+            type: bar
+        }
+        series total (
+            name: "Total"
+            execution {
+                sequence: 10
+            }
+            source {
+                location: localDatabase
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT TO_CHAR(g.GENERO_ID)||' - '||g.NOMBRE AS LABEL, COUNT(p.PELICULA_ID) AS VALUE
+                    FROM STREAM_GENEROS g LEFT JOIN STREAM_PELICULAS p ON p.GENERO_ID=g.GENERO_ID
+                    GROUP BY g.GENERO_ID,g.NOMBRE
+                    ORDER BY g.GENERO_ID
+                    ```
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+        )
+        axis x (
+            name: x
+            title: "Películas por género (sin filtro temporal)"
+        )
+        axis y (
+            name: y
+            title: "Cantidad"
+        )
+    )
+    region ch-clientes (
+        name: "Clientes por país y ciudad (sin filtro temporal)"
+        type: chart
+        layout {
+            sequence: 80
+            slot: body
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        chart {
+            type: bar
+        }
+        series total (
+            name: "Total"
+            execution {
+                sequence: 10
+            }
+            source {
+                location: localDatabase
+                type: sqlQuery
+                sqlQuery:
+                    ```sql
+                    SELECT c.PAIS||' / '||c.CIUDAD AS LABEL, COUNT(*) AS VALUE
+                    FROM STREAM_CLIENTES c
+                    GROUP BY c.PAIS,c.CIUDAD
+                    ORDER BY c.PAIS,c.CIUDAD
+                    ```
+            }
+            columnMapping {
+                label: LABEL
+                value: VALUE
+            }
+        )
+        axis x (
+            name: x
+            title: "Clientes por país y ciudad (sin filtro temporal)"
+        )
+        axis y (
+            name: y
+            title: "Cantidad"
+        )
+    )
+)

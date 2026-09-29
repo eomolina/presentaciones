@@ -1,0 +1,345 @@
+page 15 (
+    page: 15
+    name: "Devolución"
+    alias: DEVOLUCION
+    title: "Devolución"
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @/modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        authorizationScheme: mustNotBePublicUser
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    help {
+        helpText: "Consulte Devolución. Los cambios se guardan al confirmar; Cancelar conserva los datos existentes."
+    }
+    region datos-devolucion (
+        name: "Alquiler seleccionado"
+        type: staticContent
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+    )
+    region botones-devolucion (
+        name: "Acciones"
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: REGION_POSITION_03
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: #DEFAULT#
+        }
+    )
+    pageItem P15_ALQUILER_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @datos-devolucion
+            slot: regionBody
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+    pageItem P15_CLIENTE_ID (
+        type: hidden
+        layout {
+            sequence: 20
+            region: @datos-devolucion
+            slot: regionBody
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+    pageItem P15_PELICULA_ID (
+        type: hidden
+        layout {
+            sequence: 30
+            region: @datos-devolucion
+            slot: regionBody
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+    pageItem P15_CLIENTE (
+        type: displayOnly
+        label {
+            label: "Cliente"
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @datos-devolucion
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        help {
+            helpText: "Dato del alquiler. La devolución utiliza la fecha actual del servidor en America/Costa_Rica."
+        }
+    )
+    pageItem P15_PELICULA (
+        type: displayOnly
+        label {
+            label: "Pelicula"
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @datos-devolucion
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        help {
+            helpText: "Dato del alquiler. La devolución utiliza la fecha actual del servidor en America/Costa_Rica."
+        }
+    )
+    pageItem P15_FECHA_ALQUILER (
+        type: displayOnly
+        label {
+            label: "Fecha alquiler"
+            alignment: left
+        }
+        layout {
+            sequence: 60
+            region: @datos-devolucion
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        help {
+            helpText: "Dato del alquiler. La devolución utiliza la fecha actual del servidor en America/Costa_Rica."
+        }
+    )
+    pageItem P15_FECHA_VENCIMIENTO (
+        type: displayOnly
+        label {
+            label: "Fecha vencimiento"
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @datos-devolucion
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        help {
+            helpText: "Dato del alquiler. La devolución utiliza la fecha actual del servidor en America/Costa_Rica."
+        }
+    )
+    pageItem P15_FECHA_DEVOLUCION (
+        type: displayOnly
+        label {
+            label: "Fecha devolucion"
+            alignment: left
+        }
+        layout {
+            sequence: 80
+            region: @datos-devolucion
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        help {
+            helpText: "Dato del alquiler. La devolución utiliza la fecha actual del servidor en America/Costa_Rica."
+        }
+    )
+    pageItem P15_PRECIO (
+        type: displayOnly
+        label {
+            label: "Precio"
+            alignment: left
+        }
+        layout {
+            sequence: 90
+            region: @datos-devolucion
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        help {
+            helpText: "Dato del alquiler. La devolución utiliza la fecha actual del servidor en America/Costa_Rica."
+        }
+    )
+    pageItem P15_ESTADO (
+        type: displayOnly
+        label {
+            label: "Estado"
+            alignment: left
+        }
+        layout {
+            sequence: 100
+            region: @datos-devolucion
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        help {
+            helpText: "Dato del alquiler. La devolución utiliza la fecha actual del servidor en America/Costa_Rica."
+        }
+    )
+    process cargar-devolucion (
+        name: "cargar-devolucion"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                 SELECT al.CLIENTE_ID,al.PELICULA_ID,c.NOMBRE||' '||c.APELLIDO,p.TITULO,
+                 TO_CHAR(al.FECHA_ALQUILER,'YYYY-MM-DD HH24:MI:SS.FF6'),TO_CHAR(al.FECHA_VENCIMIENTO,'YYYY-MM-DD HH24:MI:SS.FF6'),
+                 TO_CHAR(CAST(SYSTIMESTAMP AT TIME ZONE 'America/Costa_Rica' AS TIMESTAMP),'YYYY-MM-DD HH24:MI:SS.FF6'),al.PRECIO,al.ESTADO
+                 INTO :P15_CLIENTE_ID,:P15_PELICULA_ID,:P15_CLIENTE,:P15_PELICULA,
+                 :P15_FECHA_ALQUILER,:P15_FECHA_VENCIMIENTO,:P15_FECHA_DEVOLUCION,:P15_PRECIO,:P15_ESTADO
+                 FROM STREAM_ALQUILERES al JOIN STREAM_CLIENTES c ON c.CLIENTE_ID=al.CLIENTE_ID
+                 JOIN STREAM_PELICULAS p ON p.PELICULA_ID=al.PELICULA_ID
+                 WHERE al.ALQUILER_ID=:P15_ALQUILER_ID AND al.ESTADO='ACTIVO' AND al.FECHA_DEVOLUCION IS NULL;
+                EXCEPTION WHEN NO_DATA_FOUND THEN RAISE_APPLICATION_ERROR(-20020,'El alquiler no existe o ya no admite devolución.');
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+    )
+    process devolver-alquiler (
+        name: "devolver-alquiler"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                 UPDATE STREAM_ALQUILERES SET FECHA_DEVOLUCION=CAST(SYSTIMESTAMP AT TIME ZONE 'America/Costa_Rica' AS TIMESTAMP), ESTADO='FINALIZADO'
+                 WHERE ALQUILER_ID=:P15_ALQUILER_ID AND ESTADO='ACTIVO' AND FECHA_DEVOLUCION IS NULL;
+                 IF SQL%ROWCOUNT<>1 THEN RAISE_APPLICATION_ERROR(-20021,'El alquiler ya fue devuelto o no es elegible.'); END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 30
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "DEVOLVER"
+        }
+    )
+    button devolver (
+        buttonName: DEVOLVER
+        label: "Confirmar devolución"
+        layout {
+            sequence: 10
+            region: @botones-devolucion
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            executeValidations: true
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: "¿Confirmar la devolución con la fecha actual?"
+        }
+    )
+    button cancel (
+        buttonName: CANCEL
+        label: "Cancelar"
+        layout {
+            sequence: 20
+            region: @botones-devolucion
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+    dynamicAction cancelar (
+        name: "cancelar"
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+        action ejecutar (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                event: @cancelar
+                fireOnInit: false
+            }
+        )
+    )
+    process cerrar-devolucion (
+        name: "cerrar-devolucion"
+        type: closeDialog
+        execution {
+            sequence: 100
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "DEVOLVER"
+        }
+    )
+)

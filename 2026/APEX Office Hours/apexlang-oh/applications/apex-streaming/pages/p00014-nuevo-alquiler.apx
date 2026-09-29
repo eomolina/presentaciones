@@ -1,0 +1,464 @@
+page 14 (
+    page: 14
+    name: "Nuevo alquiler"
+    alias: NUEVO-ALQUILER
+    title: "Nuevo alquiler"
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @/modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        authorizationScheme: mustNotBePublicUser
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    help {
+        helpText: "Consulte Nuevo alquiler. Los cambios se guardan al confirmar; Cancelar conserva los datos existentes."
+    }
+    region form-alquiler (
+        name: "Nuevo alquiler"
+        type: form
+        source {
+            location: localDatabase
+            tableName: STREAM_ALQUILERES
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+        }
+    )
+    region botones-alquiler (
+        name: "Acciones"
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: REGION_POSITION_03
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: #DEFAULT#
+        }
+    )
+    pageItem P14_ALQUILER_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @form-alquiler
+            slot: regionBody
+        }
+        source {
+            formRegion: @form-alquiler
+            column: ALQUILER_ID
+            dataType: number
+            primaryKey: true
+            queryOnly: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+    pageItem P14_CLIENTE_ID (
+        type: popupLov
+        label {
+            label: "Cliente id"
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @form-alquiler
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        lov {
+            type: sharedComponent
+            lov: @clientes-alquiler
+            displayNullValue: true
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-alquiler
+            column: CLIENTE_ID
+            dataType: number
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Cliente id. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P14_PELICULA_ID (
+        type: popupLov
+        label {
+            label: "Pelicula id"
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @form-alquiler
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        lov {
+            type: sharedComponent
+            lov: @peliculas-alquiler
+            displayNullValue: true
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-alquiler
+            column: PELICULA_ID
+            dataType: number
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Pelicula id. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P14_FECHA_ALQUILER (
+        type: displayOnly
+        label {
+            label: "Fecha alquiler"
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @form-alquiler
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+            formatMask: "YYYY-MM-DD HH24:MI:SS.FF6"
+        }
+        settings {
+            sendOnPageSubmit: false
+        }
+        source {
+            formRegion: @form-alquiler
+            column: FECHA_ALQUILER
+            dataType: timestamp
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Fecha alquiler. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P14_FECHA_VENCIMIENTO (
+        type: textField
+        label {
+            label: "Fecha vencimiento"
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @form-alquiler
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+            formatMask: "YYYY-MM-DD HH24:MI:SS.FF6"
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-alquiler
+            column: FECHA_VENCIMIENTO
+            dataType: timestamp
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Fecha vencimiento. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P14_FECHA_DEVOLUCION (
+        type: hidden
+        layout {
+            sequence: 60
+            region: @form-alquiler
+            slot: regionBody
+        }
+        source {
+            formRegion: @form-alquiler
+            column: FECHA_DEVOLUCION
+            dataType: timestamp
+            primaryKey: false
+            queryOnly: false
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+    pageItem P14_PRECIO (
+        type: numberField
+        label {
+            label: "Precio"
+            alignment: left
+        }
+        layout {
+            sequence: 70
+            region: @form-alquiler
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+            formatMask: "FM999999990D00"
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-alquiler
+            column: PRECIO
+            dataType: number
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Precio. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P14_ESTADO (
+        type: hidden
+        layout {
+            sequence: 80
+            region: @form-alquiler
+            slot: regionBody
+        }
+        source {
+            formRegion: @form-alquiler
+            column: ESTADO
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+    process solo-alta (
+        name: "solo-alta"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                 IF :P14_ALQUILER_ID IS NOT NULL THEN RAISE_APPLICATION_ERROR(-20012,'Esta página solo registra nuevos alquileres.'); END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: beforeHeader
+        }
+    )
+    process alta-elegible (
+        name: "alta-elegible"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                DECLARE
+                 l_count NUMBER;
+                BEGIN
+                 IF :P14_ALQUILER_ID IS NOT NULL THEN RAISE_APPLICATION_ERROR(-20012,'Solo se admite un alta.'); END IF;
+                 SELECT COUNT(*) INTO l_count FROM STREAM_CLIENTES WHERE CLIENTE_ID=:P14_CLIENTE_ID AND ACTIVO='S';
+                 IF l_count<>1 THEN RAISE_APPLICATION_ERROR(-20013,'Seleccione un cliente activo.'); END IF;
+                 SELECT COUNT(*) INTO l_count FROM STREAM_PELICULAS WHERE PELICULA_ID=:P14_PELICULA_ID AND ACTIVO='S';
+                 IF l_count<>1 THEN RAISE_APPLICATION_ERROR(-20014,'Seleccione una película activa.'); END IF;
+                 :P14_FECHA_ALQUILER := TO_CHAR(CAST(SYSTIMESTAMP AT TIME ZONE 'America/Costa_Rica' AS TIMESTAMP),'YYYY-MM-DD HH24:MI:SS.FF6');
+                 :P14_FECHA_DEVOLUCION := NULL;
+                 :P14_ESTADO := 'ACTIVO';
+                END;
+                ```
+        }
+        execution {
+            sequence: 10
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE"
+        }
+    )
+    validation VAL_VENCIMIENTO_VALIDO (
+        name: "vencimiento-valido"
+        execution {
+            sequence: 10
+        }
+        validation {
+            type: itemIsAValidTimestamp
+            item: P14_FECHA_VENCIMIENTO
+        }
+        error {
+            errorMessage: "Revise vencimiento valido."
+            associatedItem: @P14_FECHA_VENCIMIENTO
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE"
+        }
+    )
+    process init-alquiler (
+        name: "init-alquiler"
+        type: formInitialization
+        formRegion: @form-alquiler
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+    )
+    process defaults-alquiler (
+        name: "defaults-alquiler"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                :P14_FECHA_ALQUILER := TO_CHAR(CAST(SYSTIMESTAMP AT TIME ZONE 'America/Costa_Rica' AS TIMESTAMP),'YYYY-MM-DD HH24:MI:SS.FF6');
+                :P14_FECHA_DEVOLUCION := NULL;
+                :P14_ESTADO := 'ACTIVO';
+                :P14_PRECIO := 0;
+                END;
+                ```
+        }
+        execution {
+            sequence: 30
+            point: beforeHeader
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P14_ALQUILER_ID
+        }
+    )
+    button create (
+        buttonName: CREATE
+        label: "Guardar"
+        layout {
+            sequence: 10
+            region: @botones-alquiler
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: insert
+            executeValidations: true
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P14_ALQUILER_ID
+        }
+    )
+    process comprobar-operacion (
+        name: "comprobar-operacion"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                 IF :REQUEST = 'CREATE' AND :P14_ALQUILER_ID IS NOT NULL THEN
+                  RAISE_APPLICATION_ERROR(-20030,'El alta no admite identificador existente.');
+                 ELSIF :REQUEST IN ('SAVE','DELETE') AND (:P14_ALQUILER_ID IS NULL OR 14=14) THEN
+                  RAISE_APPLICATION_ERROR(-20031,'La operación no corresponde al registro.');
+                 END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 5
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+    button cancel (
+        buttonName: CANCEL
+        label: "Cancelar"
+        layout {
+            sequence: 40
+            region: @botones-alquiler
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+    dynamicAction cancelar (
+        name: "cancelar"
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+        action ejecutar (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                event: @cancelar
+                fireOnInit: false
+            }
+        )
+    )
+    process arp-alquiler (
+        name: "arp-alquiler"
+        type: formAutoRowProcessing
+        formRegion: @form-alquiler
+        execution {
+            sequence: 30
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE"
+        }
+    )
+    process cerrar-alquiler (
+        name: "cerrar-alquiler"
+        type: closeDialog
+        execution {
+            sequence: 100
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE"
+        }
+    )
+)

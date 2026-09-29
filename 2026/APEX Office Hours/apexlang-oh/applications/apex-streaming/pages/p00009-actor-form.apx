@@ -1,0 +1,346 @@
+page 9 (
+    page: 9
+    name: "Actor"
+    alias: ACTOR-FORM
+    title: "Actor"
+    appearance {
+        pageMode: modalDialog
+        dialogTemplate: @/modal-dialog
+        templateOptions: #DEFAULT#
+    }
+    security {
+        authentication: required
+        authorizationScheme: mustNotBePublicUser
+        pageAccessProtection: argumentsMustHaveChecksum
+        formAutoComplete: false
+    }
+    help {
+        helpText: "Consulte Actor. Los cambios se guardan al confirmar; Cancelar conserva los datos existentes."
+    }
+    region form-actor (
+        name: "Actor"
+        type: form
+        source {
+            location: localDatabase
+            tableName: STREAM_ACTORES
+        }
+        layout {
+            sequence: 10
+            slot: contentBody
+        }
+        appearance {
+            template: @/standard
+            templateOptions: #DEFAULT#
+        }
+        edit {
+            enabled: true
+        }
+    )
+    region botones-actor (
+        name: "Acciones"
+        type: staticContent
+        layout {
+            sequence: 20
+            slot: REGION_POSITION_03
+        }
+        appearance {
+            template: @/buttons-container
+            templateOptions: #DEFAULT#
+        }
+    )
+    pageItem P9_ACTOR_ID (
+        type: hidden
+        layout {
+            sequence: 10
+            region: @form-actor
+            slot: regionBody
+        }
+        source {
+            formRegion: @form-actor
+            column: ACTOR_ID
+            dataType: number
+            primaryKey: true
+            queryOnly: true
+        }
+        security {
+            sessionStateProtection: checksumRequiredSessionLevel
+        }
+    )
+    pageItem P9_NOMBRE (
+        type: textField
+        label {
+            label: "Nombre"
+            alignment: left
+        }
+        layout {
+            sequence: 20
+            region: @form-actor
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-actor
+            column: NOMBRE
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Nombre. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P9_APELLIDO (
+        type: textField
+        label {
+            label: "Apellido"
+            alignment: left
+        }
+        layout {
+            sequence: 30
+            region: @form-actor
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-actor
+            column: APELLIDO
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Apellido. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P9_FECHA_NACIMIENTO (
+        type: datePicker
+        label {
+            label: "Fecha nacimiento"
+            alignment: left
+        }
+        layout {
+            sequence: 40
+            region: @form-actor
+            slot: regionBody
+        }
+        appearance {
+            template: @/optional-floating
+            templateOptions: #DEFAULT#
+            formatMask: "YYYY-MM-DD HH24:MI:SS"
+        }
+        source {
+            formRegion: @form-actor
+            column: FECHA_NACIMIENTO
+            dataType: date
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Fecha nacimiento. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    pageItem P9_NACIONALIDAD (
+        type: textField
+        label {
+            label: "Nacionalidad"
+            alignment: left
+        }
+        layout {
+            sequence: 50
+            region: @form-actor
+            slot: regionBody
+        }
+        appearance {
+            template: @/required-floating
+            templateOptions: #DEFAULT#
+        }
+        validation {
+            valueRequired: true
+        }
+        source {
+            formRegion: @form-actor
+            column: NACIONALIDAD
+            dataType: varchar2
+            primaryKey: false
+            queryOnly: false
+        }
+        help {
+            helpText: "Indique Nacionalidad. Se aplican las restricciones del modelo; no se guarda hasta confirmar."
+        }
+    )
+    process init-actor (
+        name: "init-actor"
+        type: formInitialization
+        formRegion: @form-actor
+        execution {
+            sequence: 20
+            point: beforeHeader
+        }
+    )
+    button create (
+        buttonName: CREATE
+        label: "Guardar"
+        layout {
+            sequence: 10
+            region: @botones-actor
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: insert
+            executeValidations: true
+        }
+        serverSideCondition {
+            type: itemIsNull
+            item: P9_ACTOR_ID
+        }
+    )
+    button save (
+        buttonName: SAVE
+        label: "Guardar"
+        layout {
+            sequence: 20
+            region: @botones-actor
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: update
+            executeValidations: true
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9_ACTOR_ID
+        }
+    )
+    button delete (
+        buttonName: DELETE
+        label: "Eliminar"
+        layout {
+            sequence: 30
+            region: @botones-actor
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: submitPage
+            databaseAction: delete
+            executeValidations: false
+            requiresConfirmation: true
+        }
+        confirmation {
+            message: "Se eliminará el registro. También se eliminarán sus participaciones en el reparto."
+        }
+        serverSideCondition {
+            type: itemIsNotNull
+            item: P9_ACTOR_ID
+        }
+    )
+    process comprobar-operacion (
+        name: "comprobar-operacion"
+        type: executeCode
+        source {
+            plsqlCode:
+                ```plsql
+                BEGIN
+                 IF :REQUEST = 'CREATE' AND :P9_ACTOR_ID IS NOT NULL THEN
+                  RAISE_APPLICATION_ERROR(-20030,'El alta no admite identificador existente.');
+                 ELSIF :REQUEST IN ('SAVE','DELETE') AND (:P9_ACTOR_ID IS NULL OR 9=14) THEN
+                  RAISE_APPLICATION_ERROR(-20031,'La operación no corresponde al registro.');
+                 END IF;
+                END;
+                ```
+        }
+        execution {
+            sequence: 5
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+    button cancel (
+        buttonName: CANCEL
+        label: "Cancelar"
+        layout {
+            sequence: 40
+            region: @botones-actor
+            slot: change
+        }
+        appearance {
+            buttonTemplate: @/text
+            templateOptions: #DEFAULT#
+        }
+        behavior {
+            action: definedByDynamicAction
+        }
+    )
+    dynamicAction cancelar (
+        name: "cancelar"
+        execution {
+            sequence: 10
+        }
+        when {
+            event: click
+            selectionType: button
+            button: @cancel
+        }
+        action ejecutar (
+            action: cancelDialog
+            execution {
+                sequence: 10
+                event: @cancelar
+                fireOnInit: false
+            }
+        )
+    )
+    process arp-actor (
+        name: "arp-actor"
+        type: formAutoRowProcessing
+        formRegion: @form-actor
+        execution {
+            sequence: 30
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+    process cerrar-actor (
+        name: "cerrar-actor"
+        type: closeDialog
+        execution {
+            sequence: 100
+            point: processing
+        }
+        serverSideCondition {
+            type: requestIsContainedInValue
+            value: "CREATE,SAVE,DELETE"
+        }
+    )
+)
