@@ -1,0 +1,270 @@
+Analiza este proyecto para preparar la documentación funcional necesaria
+antes de generar una aplicación Oracle APEX con APEXlang.
+
+IMPORTANTE:
+
+En esta etapa NO debes generar APEXlang ni ningún artefacto de Oracle APEX.
+Primero debemos construir y validar la especificación funcional de la
+aplicación.
+
+Usa como fuentes de verdad:
+
+1. README.md
+2. Los scripts existentes en database/
+3. Los Oracle APEX Skills instalados, únicamente cuando sean necesarios
+   para entender qué información debe quedar definida antes de la futura
+   generación APEXlang.
+
+Inspecciona primero completamente el proyecto y el modelo de datos.
+
+A partir de esa información crea el directorio:
+
+docs/
+
+y genera únicamente estos archivos:
+
+docs/requisitos.md
+docs/modelo-funcional.md
+docs/mapa-paginas.md
+
+
+REQUISITOS DE LA DOCUMENTACIÓN
+
+1. requisitos.md
+
+Define requisitos funcionales identificados como RF-01, RF-02, etc.
+
+Debe cubrir como mínimo:
+
+- autenticación y acceso a la aplicación;
+- mantenimiento de géneros;
+- mantenimiento de películas;
+- reparto de películas y actores;
+- mantenimiento de actores;
+- consulta de filmografía de actores;
+- mantenimiento de clientes;
+- registro de alquileres;
+- devolución de películas;
+- consulta de alquileres activos;
+- identificación de alquileres vencidos;
+- estadísticas;
+- dashboard.
+
+Deriva las reglas de negocio del modelo físico existente.
+
+No inventes columnas, estados, relaciones ni reglas que contradigan
+database/.
+
+Presta especial atención al modelo de alquileres:
+
+- utiliza las columnas reales existentes;
+- distingue fecha de alquiler, fecha de vencimiento y fecha de devolución;
+- no inventes un estado VENCIDO si el modelo no lo contempla;
+- si un alquiler vencido debe determinarse a partir de las fechas,
+  documéntalo como condición derivada;
+- identifica claramente las reglas de integridad que ya pertenecen a
+  la base de datos y no necesitan duplicarse innecesariamente en APEX.
+
+
+2. modelo-funcional.md
+
+Describe:
+
+- propósito de la aplicación;
+- actores/usuarios de la aplicación, únicamente si pueden deducirse;
+- autenticación y acceso a la aplicación;
+- entidades funcionales;
+- relaciones entre ellas;
+- operaciones principales;
+- reglas de negocio;
+- flujo de alquiler;
+- flujo de devolución;
+- definición funcional de alquiler activo;
+- definición funcional de alquiler vencido;
+- relación Película → Reparto;
+- relación Actor → Filmografía;
+- información requerida por Dashboard y Estadísticas.
+
+Mantén separados:
+
+- modelo físico;
+- reglas de negocio;
+- comportamiento de la interfaz.
+
+No agregues funcionalidades que no estén justificadas por README.md,
+database/ o los requisitos derivados.
+
+
+3. mapa-paginas.md
+
+Propón la estructura de páginas de la aplicación.
+
+Debe contemplar como mínimo:
+
+- Dashboard;
+- Géneros;
+- Películas;
+- Reparto;
+- Actores;
+- Filmografía;
+- Clientes;
+- Alquileres;
+- Devolución;
+- Vencimientos;
+- Estadísticas;
+- Login.
+
+
+AUTENTICACIÓN
+
+La aplicación debe contemplar una página Login destinada a la
+autenticación de los usuarios.
+
+La página Login debe ser pública.
+
+Las páginas funcionales de la aplicación deben requerir autenticación.
+
+En esta etapa documenta este comportamiento funcionalmente. No escribas
+todavía sintaxis APEXlang ni selecciones componentes técnicos que no
+estén respaldados posteriormente por los Oracle APEX Skills.
+
+
+DISEÑO DE LOS MANTENIMIENTOS
+
+Los listados principales deben plantearse como Interactive Reports.
+
+Los formularios de mantenimiento NO deben diseñarse como Forms embebidos
+dentro de las páginas de los reportes.
+
+Los formularios de mantenimiento deben plantearse como páginas separadas
+de tipo Modal Dialog, utilizando posteriormente el modo y la plantilla
+de Modal Dialog soportados por los Oracle APEX Skills.
+
+El diseño previsto debe ser:
+
+Interactive Report
+        ↓
+Nuevo / Editar
+        ↓
+Modal Dialog Form
+        ↓
+Guardar / Cancelar
+        ↓
+cerrar diálogo
+        ↓
+refrescar reporte padre
+
+Documenta esta decisión funcionalmente, pero NO escribas todavía
+sintaxis APEXlang.
+
+
+RELACIONES PELÍCULAS / REPARTO Y ACTORES / FILMOGRAFÍA
+
+Películas y Reparto deben manejarse como páginas funcionales separadas.
+
+Desde la página Películas debe existir una acción que permita seleccionar
+una película y navegar a la página Reparto.
+
+La página Reparto debe recibir la identificación de la película
+seleccionada y mostrar únicamente los registros de reparto
+correspondientes a esa película.
+
+Las operaciones de creación y edición de registros de reparto deben
+mantener el contexto de la película seleccionada.
+
+Actores y Filmografía deben manejarse igualmente como páginas funcionales
+separadas.
+
+Desde la página Actores debe existir una acción que permita seleccionar
+un actor y navegar a la página Filmografía.
+
+La página Filmografía debe recibir la identificación del actor
+seleccionado y mostrar únicamente las películas asociadas a ese actor.
+
+La navegación entre estas páginas debe conservar explícitamente el
+identificador del registro padre necesario para filtrar los registros
+hijos.
+
+No asumas un patrón master-detail si este no está soportado por los
+Oracle APEX Skills. Documenta la navegación padre → hijo, el parámetro
+necesario y el criterio de filtrado para que posteriormente puedan
+implementarse utilizando patrones soportados por los Skills.
+
+
+DEVOLUCIÓN
+
+Devolución debe tratarse como una operación especializada sobre un
+alquiler existente y no simplemente como otro mantenimiento CRUD.
+
+
+DASHBOARD Y ESTADÍSTICAS
+
+Dashboard y Estadísticas deben definir qué información mostrarán,
+basándose exclusivamente en información que pueda obtenerse del modelo
+de datos existente.
+
+
+REGLAS DE CONSISTENCIA
+
+Antes de terminar:
+
+1. Compara los tres documentos entre sí.
+2. Compara cada requisito con las tablas y columnas reales de database/.
+3. Verifica que toda página tenga una justificación en requisitos.md.
+4. Verifica que las reglas de alquiler y devolución sean consistentes
+   en los tres documentos.
+5. Verifica que ninguna consulta o funcionalidad requiera columnas
+   inexistentes.
+6. Verifica que los estados documentados sean exactamente compatibles
+   con los permitidos por el modelo.
+7. Verifica que fecha_vencimiento se utilice consistentemente para el
+   control de vencimientos.
+8. Verifica que los vencimientos derivados no modifiquen físicamente el
+   estado del alquiler.
+9. Verifica que Login esté documentada como página pública y que las
+   páginas funcionales requieran autenticación.
+10. Verifica que Películas → Reparto conserve el identificador de la
+    película y que Reparto se filtre por la película seleccionada.
+11. Verifica que Actores → Filmografía conserve el identificador del
+    actor y que Filmografía se filtre por el actor seleccionado.
+12. Verifica que las operaciones realizadas sobre Reparto mantengan
+    correctamente el contexto de la película seleccionada.
+13. No presupongas que una validación futura de APEXlang detectará
+    componentes funcionales faltantes; la documentación debe especificar
+    explícitamente lo que la aplicación necesitará.
+14. Si encuentras una ambigüedad real que afecte el diseño posterior,
+    NO inventes la decisión. Documéntala y detente para solicitar mi
+    decisión.
+
+
+NO hagas en esta etapa:
+
+- no generes applications/;
+- no generes .apexlang/;
+- no generes archivos .apx;
+- no generes páginas APEX;
+- no ejecutes apex validate;
+- no ejecutes runtime validate;
+- no ejecutes SQL;
+- no te conectes a la base de datos;
+- no modifiques database/;
+- no modifiques README.md;
+- no importes ninguna aplicación;
+- no modifiques Oracle APEX.
+
+
+Al finalizar reporta:
+
+- archivos creados;
+- requisitos funcionales identificados;
+- páginas propuestas;
+- relaciones padre → hijo documentadas;
+- reglas de negocio principales;
+- decisiones derivadas del modelo;
+- ambigüedades encontradas;
+- inconsistencias encontradas entre README.md y database/;
+- DOCUMENTATION READY: YES/NO.
+
+Si existen ambigüedades que requieran una decisión humana,
+DOCUMENTATION READY debe ser NO y debes detenerte antes de cualquier
+generación APEXlang.
