@@ -1,0 +1,341 @@
+La documentación funcional de APEX Streaming ya fue generada.
+
+Antes de generar los artefactos APEXlang, prepara una especificación
+completa de generación de la aplicación.
+
+FUENTES DE VERDAD
+
+Utiliza:
+
+1. README.md
+2. database/
+3. docs/requisitos.md
+4. docs/modelo-funcional.md
+5. docs/mapa-paginas.md
+6. Los Oracle APEX Skills instalados.
+
+Los Oracle APEX Skills instalados son la fuente de verdad para determinar
+la sintaxis, componentes, propiedades y patrones soportados por APEXlang.
+
+No inventes sintaxis APEXlang ni utilices patrones que no estén
+respaldados por los Skills.
+
+IMPORTANTE
+
+En esta etapa NO generes todavía:
+
+- applications/
+- archivos .apx;
+- páginas APEXlang;
+- componentes APEX;
+- imports;
+- cambios en Oracle APEX;
+- cambios en la base de datos.
+
+El objetivo es determinar exactamente qué deberá generar la siguiente
+etapa.
+
+
+1. INSPECCIÓN DE LOS SKILLS
+
+Inspecciona los Oracle APEX Skills necesarios para implementar los
+requisitos documentados.
+
+Verifica específicamente los patrones soportados para:
+
+- Application;
+- Authentication;
+- Login Page;
+- Navigation;
+- Breadcrumbs;
+- Interactive Reports;
+- Interactive Report Columns;
+- Links;
+- Modal Dialog Pages;
+- Forms;
+- Form Items;
+- Primary Keys;
+- LOVs;
+- Form Initialization;
+- Form Automatic Row Processing;
+- Validations;
+- Buttons;
+- Branches / Dialog Close;
+- Dynamic Actions;
+- apexafterclosedialog;
+- Charts o componentes requeridos por Dashboard/Estadísticas.
+
+No asumas que un componente existe solamente porque sea conocido en
+Oracle APEX. Confirma cómo debe representarse mediante los Skills
+instalados.
+
+
+2. INVENTARIO DE PÁGINAS
+
+A partir de docs/mapa-paginas.md crea un inventario completo de las
+páginas que necesitará la aplicación.
+
+Para cada página define:
+
+- propósito;
+- tipo de página;
+- modo normal o Modal Dialog;
+- regiones;
+- fuente de datos;
+- Interactive Reports;
+- columnas explícitas de cada reporte;
+- items;
+- PK;
+- LOVs;
+- botones;
+- enlaces;
+- procesos;
+- validaciones;
+- navegación;
+- página origen y destino;
+- parámetros que deben propagarse;
+- comportamiento después de cerrar un diálogo.
+
+No asignes números de página arbitrariamente si existe una razón para
+derivarlos del diseño. Propón una numeración coherente y documentada.
+
+
+3. INTERACTIVE REPORTS
+
+Para CADA Interactive Report:
+
+- identifica exactamente la consulta o tabla que será su fuente;
+- enumera explícitamente TODAS las columnas que deberá materializar
+  APEXlang;
+- define heading;
+- tipo;
+- data type;
+- secuencia;
+- formato cuando corresponda;
+- columna de enlace cuando corresponda.
+
+IMPORTANTE:
+
+No consideres completo un Interactive Report solamente porque tenga
+source/sqlQuery.
+
+Las columnas del reporte deben quedar explícitamente especificadas para
+su posterior generación.
+
+
+4. FORMULARIOS
+
+Los mantenimientos deben seguir el patrón:
+
+Interactive Report
+        ↓
+Nuevo / Editar
+        ↓
+Modal Dialog Form
+        ↓
+Guardar / Cancelar
+        ↓
+Close Dialog
+        ↓
+Refresh Interactive Report
+
+Para cada formulario Modal Dialog identifica explícitamente:
+
+- tabla;
+- PK;
+- todos los items;
+- source.column;
+- source.dataType;
+- items requeridos;
+- LOVs para FK;
+- Form Initialization;
+- Form Automatic Row Processing;
+- validaciones;
+- botón Guardar;
+- botón Cancelar;
+- cierre del diálogo.
+
+No consideres funcional un formulario únicamente porque exista una
+región Form.
+
+
+5. LOGIN Y AUTENTICACIÓN
+
+La especificación debe contemplar explícitamente:
+
+- página Login pública;
+- esquema de autenticación soportado por los Skills;
+- páginas funcionales protegidas;
+- navegación posterior al login.
+
+Determina el patrón exacto utilizando los Skills instalados.
+
+
+6. PELÍCULAS → REPARTO
+
+Películas y Reparto deben ser páginas separadas.
+
+La especificación debe indicar explícitamente:
+
+Películas
+    ↓ seleccionar película
+Reparto
+    ↓ filtro por PELICULA_ID
+Modal Dialog de Reparto
+
+Determina:
+
+- cómo se propaga PELICULA_ID;
+- item de contexto necesario en Reparto;
+- criterio de filtrado;
+- enlace desde Películas;
+- creación de un registro de reparto conservando PELICULA_ID;
+- edición conservando el contexto;
+- LOV de Actor.
+
+Utiliza únicamente patrones soportados por los Skills.
+
+
+7. ACTORES → FILMOGRAFÍA
+
+Actores y Filmografía deben ser páginas separadas.
+
+La especificación debe indicar:
+
+Actores
+    ↓ seleccionar actor
+Filmografía
+    ↓ filtro por ACTOR_ID
+
+Determina:
+
+- cómo se propaga ACTOR_ID;
+- item de contexto;
+- criterio de filtrado;
+- enlace desde Actores;
+- información mostrada en Filmografía.
+
+Filmografía es principalmente una consulta de las películas asociadas
+al actor. No inventes operaciones CRUD si los requisitos funcionales
+no las requieren.
+
+
+8. ALQUILERES Y DEVOLUCIÓN
+
+Respeta estrictamente las reglas documentadas y el modelo físico.
+
+En particular:
+
+- utiliza FECHA_VENCIMIENTO;
+- no inventes estado VENCIDO;
+- vencimiento debe derivarse de las fechas cuando así esté documentado;
+- Devolución debe ser una operación especializada sobre un alquiler;
+- no conviertas Devolución en un CRUD genérico.
+
+Identifica todos los items, validaciones, procesos y navegación
+necesarios.
+
+
+9. DASHBOARD Y ESTADÍSTICAS
+
+Especifica únicamente indicadores y estadísticas que puedan obtenerse
+del modelo existente.
+
+Para cada región define:
+
+- información mostrada;
+- fuente;
+- columnas o métricas;
+- tipo de componente APEX previsto.
+
+Confirma en los Skills que el componente propuesto esté soportado antes
+de seleccionarlo.
+
+
+10. LOVs
+
+Identifica todas las LOVs necesarias.
+
+Para cada una define:
+
+- propósito;
+- tabla/query;
+- display column;
+- return column;
+- páginas/items que la utilizan.
+
+Utiliza posteriormente LOVs compartidas cuando corresponda y cuando el
+patrón esté soportado por los Skills.
+
+
+11. VALIDACIÓN DE COMPLETITUD
+
+Antes de terminar verifica:
+
+- cada RF tiene uno o más componentes que lo implementarán;
+- cada página documentada tiene una implementación prevista;
+- cada Interactive Report tiene sus columnas explícitas;
+- cada Form tiene sus items explícitos;
+- cada Form tiene PK cuando corresponda;
+- cada Form tiene Initialization y Automatic Row Processing cuando
+  corresponda;
+- cada FK editable tiene LOV cuando corresponda;
+- cada Modal Dialog tiene Guardar/Cancelar y mecanismo de cierre;
+- cada reporte padre tiene mecanismo de refresh después del cierre;
+- Login y autenticación están contemplados;
+- Películas → Reparto conserva PELICULA_ID;
+- Actores → Filmografía conserva ACTOR_ID;
+- Devolución mantiene su comportamiento especializado;
+- Dashboard y Estadísticas utilizan únicamente datos disponibles;
+- no se requieren columnas inexistentes en database/.
+
+
+12. ARTEFACTO DE SALIDA
+
+Genera:
+
+.apexlang/application-spec.md
+
+Este documento debe convertirse en el contrato de generación de la
+siguiente etapa.
+
+Debe contener suficiente detalle para que posteriormente pueda
+verificarse que ningún componente funcional quedó sin generar.
+
+
+NO HAGAS TODAVÍA
+
+- no generes applications/;
+- no generes archivos .apx;
+- no ejecutes apex validate;
+- no ejecutes runtime validate;
+- no ejecutes SQL;
+- no te conectes a la base de datos;
+- no importes ninguna aplicación;
+- no modifiques Oracle APEX;
+- no modifiques database/;
+- no modifiques docs/.
+
+
+AL FINAL REPORTA
+
+- Skills consultados;
+- páginas especificadas;
+- cantidad de Interactive Reports;
+- cantidad total de columnas de reportes especificadas;
+- cantidad de Modal Dialog Forms;
+- cantidad total de items de formularios especificados;
+- LOVs requeridas;
+- relaciones padre → hijo especificadas;
+- componentes de autenticación;
+- requisitos sin implementación;
+- patrones requeridos no soportados por los Skills;
+- ambigüedades que requieren decisión humana;
+- SPECIFICATION READY: YES/NO.
+
+Si existe un requisito que no puedas representar con los patrones
+soportados por los Skills, no inventes una solución.
+
+Documenta el problema y devuelve:
+
+SPECIFICATION READY: NO
