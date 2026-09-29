@@ -19,3 +19,4 @@ En este repositorio encontrará los siguientes archivos
 
 ####Template Directives.pdf
 Presentación en formato PDF
+[📄 Ver presentación](Template%20Directives.pdf)
