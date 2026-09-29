@@ -17,3 +17,5 @@ Esta presentación es un viaje introductorio de descubrimiento de la manera en q
 
 En este repositorio encontrará los siguientes archivos
 
+####Template Directives.pdf
+Presentación en formato PDF
