@@ -1,0 +1,57 @@
+Quiero crear el modelo de datos de una aplicación Oracle APEX
+llamada APEX Streaming.
+
+La aplicación administrará una plataforma de alquiler de películas.
+
+Crea el modelo relacional para:
+
+- géneros
+- películas
+- actores
+- relación películas-actores
+- clientes
+- alquileres
+
+Requisitos:
+
+STREAM_PELICULAS debe almacenar:
+- titulo
+- descripcion
+- genero
+- año
+- duracion
+- clasificacion
+- pais de origen
+- fecha de estreno
+- idioma
+- rating
+- estado
+
+STREAM_CLIENTES debe almacenar:
+- nombre
+- apellido
+- email
+- pais
+- ciudad
+- fecha de nacimiento
+- genero
+- fecha de registro
+- estado
+
+STREAM_ACTORES debe almacenar:
+- nombre
+- apellido
+- fecha de nacimiento
+- nacionalidad
+
+STREAM_PELICULAS_ACTORES debe relacionar peliculas y actores y debe tener una relación de llave única para película y actor de manera que no se pueda duplicar un actor en una pelicula.
+
+STREAM_ALQUILERES debe relacionar clientes y películas.
+
+Genera SQL Oracle 26ai.
+
+Utiliza como llaves primarias columnas de identidad para todas las tablas.
+
+Utiliza PK, FK, UNIQUE y CHECK constraints apropiados.
+
+No generes todavía objetos APEX.
