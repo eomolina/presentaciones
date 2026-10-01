@@ -39,11 +39,11 @@ Para ejecutar el ejercicio realizado durante la demostración de la presentació
 3. Crear en la carpeta abierta el archivo README.md y copiar el contenido del archivo README.md de la carpeta apexlang-of de este repositorio [Abrir README.md](./apexlang-oh/README.md).
 4. Crear una carpeta llamada "database" dentro de la carpeta creada para el proyecto en el punto 1 anterior.
 5. Copiar en la carpeta "database" recién creada, los archivos generar-datos.sql [Abrir generar-datos.sql](./apexlang-oh/scripts/generar-datos.sql) y modelo-datos.sql [Abrir modelo-datos.sql](./apexlang-oh/scripts/modelo-datos.sql).
-6. En VS Vode, abra su terminal Codex (o el agente de IA que esté usando) y copie el contenido del archivo *funcional.txt* que se encuentra en la carpeta "apexlang-oh/prompts" de este repositorio [Abrir funcional.txt](./apexlang-oh/prompts/funcional.txt).
+6. En VS Vode, abra su terminal Codex (o el agente de IA que esté usando) y copie el contenido del archivo *funcional.txt* que se encuentra en la carpeta "prompts" de este repositorio [Abrir funcional.txt](./prompts/funcional.txt).
 7. Ejecute el prompt recién copiado.
-8. Una vez finalizada la ejecución del prompt anterior, en la terminal de Codex (o el agente de IA que esté usando), copie y ejecute el contenido del archivo *especificacionn.txt* de la carpeta "/apexlang-oh/prompts" [Abrir especificacion.txt](./apexlang-oh/prompts/especificacion.txt).
-9. Repita el paso 8 para el archivo *genera-app.txt*.
-10. Repita el paso 8 para el archivo *instalar.txt*.
+8. Una vez finalizada la ejecución del prompt anterior, en la terminal de Codex (o el agente de IA que esté usando), copie y ejecute el contenido del archivo *especificacionn.txt* de la carpeta "/apexlang-oh/prompts" [Abrir especificacion.txt](./prompts/especificacion.txt).
+9. Repita el paso 8 para el archivo *genera-app.txt* [Abrir especificacion.txt](./prompts/genera-app.txt).
+10. Repita el paso 8 para el archivo *instalar.txt* [Abrir especificacion.txt](./prompts/instalar.txt).
 11. Ingrese a su espacio de trabajo APEX y cargue y ejecute el archivo *modelo-datos.sql* de la carpeta "apexlang-oh/scripts".
 12. Repita el paso anterior para el archivo *generar-datos.sql*.
 13. Ejecute y pruebe la aplicación generada.
