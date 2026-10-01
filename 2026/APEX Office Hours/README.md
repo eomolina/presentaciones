@@ -33,3 +33,7 @@ Es necesario que cuente con los siguientes elementos instalados y configurados:
 
 Para ejecutar el ejercicio realizado durante la demostración de la presentación, usted debe:
 
+1. Crear una carpeta para el proyecto, como por ejemplo "apexlang-oh"
+2. Abrir la carpeta creada en el punto anterior en VS Code
+3. Crear en la carpeta abierta el archivo README.md y copiar el contenido del archivo README.md de la carpeta apexlang-of de este repositorio
+
