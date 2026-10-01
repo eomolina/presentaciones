@@ -19,3 +19,17 @@ La carpeta **scripts** contiene los scripts necesarios para crear el modelo de d
 En la carpeta **prompts** va a encontrar las instrucciones usadas con el agente de IA para ejecutar las diferentes funciones de generación de la aplicación.
 
 Puede ver la presentación desde el archivo APEXlang.pdf [📄 Ver presentación](APEXlang.pdf)
+
+## Paso a Paso
+
+### Requisitos
+Es necesario que cuente con los siguientes elementos instalados y configurados:
+
+1. Oracle APEX 26.1 o superior
+2. ORDS 26.1 o superior
+3. SQLcl 26.1 o superior
+4. Base de datos Oracle 26ai
+5. VS Code con su agente de codificación preferido (Codex, Claude Code, Gemini Cli, ...)
+
+Para ejecutar el ejercicio realizado durante la demostración de la presentación, usted debe:
+
